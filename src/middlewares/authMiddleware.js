@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const httpStatus = require('http-status');
+const tokenHelper = require('../utils/helpers/tokenHelper');
 
 // Middleware function to authenticate JWT token
-exports.authenticateToken = (req, res, next) => {
+exports.authenticateToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -12,10 +13,13 @@ exports.authenticateToken = (req, res, next) => {
     }
 
     try {
-        // Store the user object in the request for further use
         const payload = jwt.verify(token, process.env.JWT_SECRET, {ignoreExpiration: false});
         if (payload.token.type !== 'access') {
             return res.status(httpStatus.UNAUTHORIZED).json({message: 'Invalid token'});
+        }
+        const isValid = await tokenHelper.validateAccessToken(payload.token.version);
+        if (!isValid) {
+            return res.status(httpStatus.UNAUTHORIZED).json({message: 'Unauthorized'});
         }
         req.tokenPayload = payload;
         next();
@@ -37,7 +41,7 @@ exports.authenticateRefreshToken = (req, res, next) => {
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         // If token type is access token, check token expiry
-        if (payload.token.type === 'access') {
+        if (payload?.token?.type === 'access') {
             const currentTimestamp = Math.floor(Date.now() / 1000); // Current timestamp in seconds
             if (payload.exp && payload.exp < currentTimestamp) {
                 return res.status(httpStatus.UNAUTHORIZED).json({message: 'Token expired'});
@@ -53,3 +57,4 @@ exports.authenticateRefreshToken = (req, res, next) => {
         return res.status(httpStatus.UNAUTHORIZED).json({message: 'Unauthorized'});
     }
 };
+
