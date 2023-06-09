@@ -1,6 +1,4 @@
 const User = require('../models/UserModel');
-const httpStatus = require("http-status");
-const bcrypt = require("bcrypt");
 const passwordHelper = require('../utils/helpers/passwordHelper');
 
 exports.getUsers = async (req) => {
@@ -15,18 +13,17 @@ exports.createUser = async (userData) => {
     try {
         const newUser = new User(userData);
         await newUser.save();
-        return newUser;
+        return {success: true, message: 'User created successfully', data: newUser};
     } catch (exc) {
         if (exc && exc.code === 11000) {
             if (exc.keyPattern && exc.keyPattern.username === 1) {
-                throw new Error('Username already exists');
+                return {success: false, message: 'Username already exists'};
             } else if (exc.keyPattern && exc.keyPattern.email === 1) {
-                throw new Error('Email already exists');
-            } else {
-                throw new Error('Failed to create user');
+                return {success: false, message: 'Email already exists'};
             }
+            return {success: false, message: 'Failed to create user'};
         } else {
-            throw new Error(exc);
+            return {success: false, message: exc.message};
         }
     }
 }
@@ -48,19 +45,18 @@ exports.updatePassword = async (userId, currentPassword, newPassword) => {
     try {
         const user = await User.findById(userId);
         if (!user) {
-            throw new Error('User not found');
+            return {success: false, message: 'User not found'};
         }
         const isPasswordValid = await passwordHelper.comparePassword(currentPassword, user.password);
-
         if (!isPasswordValid) {
-            throw new Error('Invalid current password');
+            return {success: false, message: 'Invalid current password'};
         }
         // Hash the new password
         user.password = await passwordHelper.hashPassword(newPassword);
-        return user.save();
+        await user.save();
+        return {success: true, message: 'Password updated'};
     } catch (error) {
-        console.error('Error updating password:', error);
-        throw new Error('Internal server error');
+        return {success: false, message: 'Internal server error'};
     }
 };
 
@@ -92,22 +88,6 @@ exports.isEmailExist = async (email) => {
 exports.isUserNameExist = async (username) => {
     try {
         return User.findOne({username}).select('username');
-    } catch (exc) {
-        throw new Error(exc.message);
-    }
-}
-
-exports.updateToken = async (userId, token, maxAllowedTokens = 5) => {
-    try {
-        const user = await User.findById(userId).select('tokens');
-        if (user) {
-            user.tokens.push(token);
-        }
-        if (user.tokens.length > maxAllowedTokens) {
-            // Remove the first token from the array
-            user.tokens.shift();
-        }
-        return user.save();
     } catch (exc) {
         throw new Error(exc.message);
     }
