@@ -22,6 +22,7 @@ exports.updateTokens = async (user, token, maxAllowedTokens = process.env.MAX_AL
         await user.save();
         return {success: true, message: 'Tokens updated'};
     } catch (exc) {
+        console.log("Exc:", exc.message)
         return {success: false, message: exc.message};
     }
 }
