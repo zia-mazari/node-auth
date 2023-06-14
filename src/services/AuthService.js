@@ -13,14 +13,13 @@ exports.login = async (email, password) => {
             const updateResponse = await tokenHelper.updateTokens(user, {rtv: tokenVersion});
             if(updateResponse.success){
                 return {success: true, data: {refreshToken, accessToken}}
-            } else {
-                return {success: false, message: 'Invalid email/password'}
             }
+            return updateResponse;
         } else {
-            return {success: false, message: 'Invalid email/password'}
+            return {success: false, message: 'Invalid email/passwordd'}
         }
     } else {
-        return {success: false, message: 'Invalid email/password'}
+        return {success: false, message: 'Invalid email/passwordd'}
     }
 };
 

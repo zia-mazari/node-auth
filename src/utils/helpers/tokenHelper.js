@@ -1,12 +1,18 @@
-const {createClient} = require('redis');
+const redis = require('redis');
 const {v4: uuidv4} = require("uuid");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
-const client = createClient();
+
+
+// Create a Redis client
+const client = redis.createClient(/*{
+    host: 'redis_container', // Specify the host where Redis is running
+    port: 6380, // Specify the port mapped to the Redis container
+}*/);
+let isRedisConnected = false;
 
 exports.updateTokens = async (user, token, maxAllowedTokens = process.env.MAX_ALLOWED_LOGINS) => {
     try {
-        await client.connect();
         user.tokens.push(token);
         if (user.tokens.length > maxAllowedTokens) {
             // Remove the first token from the array & redis
@@ -18,7 +24,6 @@ exports.updateTokens = async (user, token, maxAllowedTokens = process.env.MAX_AL
             EX: expiryTimeInSeconds,
             NX: true
         });
-        await client.disconnect();
         await user.save();
         return {success: true, message: 'Tokens updated'};
     } catch (exc) {
@@ -27,10 +32,7 @@ exports.updateTokens = async (user, token, maxAllowedTokens = process.env.MAX_AL
 }
 
 exports.validateAccessToken = async (tokenVersion, payload) => {
-    await client.connect();
-    const totalTokens = await client.exists(tokenVersion);
-    await client.disconnect();
-    return totalTokens;
+    return await client.exists(tokenVersion);
 }
 
 exports.generateAccessTokens = async (user) => {
@@ -42,3 +44,18 @@ exports.generateAccessTokens = async (user) => {
 
     return {accessToken, refreshToken, tokenVersion}
 };
+
+(async () => {
+    if (!isRedisConnected) {
+        await new Promise((resolve, reject) => {
+            client.connect((error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    isRedisConnected = true;
+                    resolve(true);
+                }
+            });
+        });
+    }
+})();

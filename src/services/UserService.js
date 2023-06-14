@@ -63,7 +63,7 @@ exports.updatePassword = async (userId, currentPassword, newPassword) => {
 
 exports.getUserByEmail = async (email) => {
     try {
-        return User.findOne({email: email});
+        return await User.findOne({email: email});
     } catch (exc) {
         throw new Error(exc.message);
     }

@@ -13,7 +13,7 @@ connectDB();
 app.use('/', routes);
 
 
-const port = 3000;
+const port = process.env.APP_PORT;
 app.listen(port, () => {
     console.log(`Server started at port: ${port}`);
 });

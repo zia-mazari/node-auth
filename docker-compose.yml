@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+
+  auth:
+    container_name: auth_container
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      APP_PORT: 3000
+      DB_URI: mongodb://db_container:27017/users # OR mongodb://<service_name>:27017
+      DB_NAME: users
+    links:
+      - mongo
+      - redis
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - mongo
+    volumes:
+      - .:/opt/projects/krava-account
+      - /opt/projects/krava-account/node_modules
+
+  mongo:
+    container_name: db_container #optional
+    image: mongo
+    ports:
+      - "27018:27017"
+    restart: always
+    volumes:
+      - mongo-data:/var/lib/mongodb
+    networks:
+      - app-network
+
+  redis:
+    container_name: redis_container
+    image: redis
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data: {}
