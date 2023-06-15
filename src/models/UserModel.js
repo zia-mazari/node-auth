@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const {string} = require("joi");
 
 // Define the User schema
 const userSchema = new mongoose.Schema(
