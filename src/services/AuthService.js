@@ -16,10 +16,10 @@ exports.login = async (email, password) => {
             }
             return updateResponse;
         } else {
-            return {success: false, message: 'Invalid email/passwordd'}
+            return {success: false, message: 'Invalid email/password'}
         }
     } else {
-        return {success: false, message: 'Invalid email/passwordd'}
+        return {success: false, message: 'Invalid email/password'}
     }
 };
 
