@@ -2,6 +2,7 @@ const express = require('express');
 const {connectDB} = require('./src/config/dbConfig');
 const routes = require('./src/routes');
 const app = express();
+require('dotenv').config();
 
 // Middleware
 app.use(express.json());
