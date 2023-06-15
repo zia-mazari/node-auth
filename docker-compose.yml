@@ -8,11 +8,15 @@ services:
       - "3000:3000"
     environment:
       APP_PORT: 3000
-      DB_URI: mongodb://db_container:27017/users # OR mongodb://<service_name>:27017
-      DB_NAME: users
-    links:
-      - mongo
-      - redis
+      DB_URI: mongodb://db_container:27017/users
+      # Redis
+      REDIS_URL: redis://redis:6379
+      # Password & JWT tokens
+      JWT_SECRET: vgSIhKe5zF2WGmtdVUFB3A3wgnznngs5xEfT4Sn/XRslhanaqnbFm2Wruzsq5H7ctX2nTKsN5YMq/BF0fmWReqAgc30mZj1IsgYGLw5xvnya8Rm+cOW70hRWRopNZjN7IxcRmXgXqXr6hcK7ogSh8ApeaNYktAJHD1MSfqjOodXI7byXjc5WWgQDJMs70kgdGkrI1GyGDGeqDbgyUQcqtpt1qizW67ZYAUsRJz7fU3OB4JVS9CuFcaKafx3NUPMpSRM77VLTKntA/LkqGtQioL2GoiusMVpAyLBhseOMr/4u80tlZnGYktEbfWqMKqw/CQNvaXm4Pyji6N3ff5tz0qY3Rh6kJDBpilhg4rFD3YA=
+      PASSWORD_SALT_ROUNDS: 10
+      TOKEN_LIFETIME_HOURS: 8
+      MAX_ALLOWED_LOGINS: 5
+
     networks:
       - app-network
     depends_on:
@@ -24,7 +28,7 @@ services:
 
   mongo:
     container_name: db_container #optional
-    image: mongo
+    image: mongo:latest
     ports:
       - "27018:27017"
     restart: always
@@ -35,10 +39,14 @@ services:
 
   redis:
     container_name: redis_container
-    image: redis
+    image: redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+        - ./redis.conf:/usr/local/etc/redis/redis.conf
     restart: always
     ports:
       - "6380:6379"
+
     networks:
       - app-network
 
