@@ -6,11 +6,12 @@ interface IUserDetail {
   id: string;
   userId: string;
   secondaryEmail?: string;
-  fullName?: string;
+  firstName?: string;
+  middleName?: string;
+  lastEmail?: string;
   dateOfBirth?: Date;
   phoneNumber?: string;
   profilePicture?: string;
-  bio?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -21,11 +22,12 @@ export class UserDetail extends Model<IUserDetail, UserDetailCreationAttributes>
   public id!: string;
   public userId!: string;
   public secondaryEmail!: string;
-  public fullName!: string;
+  public firstName!: string;
+  public middleName!: string;
+  public lastEmail!: string;
   public dateOfBirth!: Date;
   public phoneNumber!: string;
   public profilePicture!: string;
-  public bio!: string;
 
   // Timestamps
   public readonly createdAt!: Date;
@@ -54,7 +56,15 @@ UserDetail.init(
         isEmail: true,
       },
     },
-    fullName: {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    middleName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lastEmail: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -68,10 +78,6 @@ UserDetail.init(
     },
     profilePicture: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
-    bio: {
-      type: DataTypes.TEXT,
       allowNull: true,
     },
   },
