@@ -51,11 +51,12 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
 
     const userDetail = user.userDetail || {
       secondaryEmail: null,
-      fullName: null,
+      firstName: null,
+      middleName: null,
+      lastEmail: null,
       dateOfBirth: null,
       phoneNumber: null,
-      profilePicture: null,
-      bio: null
+      profilePicture: null
     };
     
     const response: ResponseData = {
@@ -67,11 +68,12 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
         email: user.email,
         lastLogin: user.lastLogin,
         secondaryEmail: userDetail.secondaryEmail,
-        fullName: userDetail.fullName,
+        firstName: userDetail.firstName,
+        middleName: userDetail.middleName,
+        lastEmail: userDetail.lastEmail,
         dateOfBirth: userDetail.dateOfBirth,
         phoneNumber: userDetail.phoneNumber,
-        profilePicture: userDetail.profilePicture,
-        bio: userDetail.bio
+        profilePicture: userDetail.profilePicture
       }
     };
     res.json(response);
@@ -123,7 +125,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       return;
     }
 
-    const { username, email, fullName, secondaryEmail, dateOfBirth, phoneNumber, bio } = req.body;
+    const { username, email, firstName, middleName, lastEmail, secondaryEmail, dateOfBirth, phoneNumber } = req.body;
 
     // Check if email is already taken
     if (email && email !== user.email) {
@@ -153,19 +155,21 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       userDetail = await UserDetail.create({
         userId: user.id,
         secondaryEmail,
-        fullName,
+        firstName,
+        middleName,
+        lastEmail,
         dateOfBirth,
-        phoneNumber,
-        bio
+        phoneNumber
       });
     } else {
       // Update existing user detail
       await userDetail.update({
         secondaryEmail: secondaryEmail || userDetail.secondaryEmail,
-        fullName: fullName || userDetail.fullName,
+        firstName: firstName || userDetail.firstName,
+        middleName: middleName || userDetail.middleName,
+        lastEmail: lastEmail || userDetail.lastEmail,
         dateOfBirth: dateOfBirth || userDetail.dateOfBirth,
-        phoneNumber: phoneNumber || userDetail.phoneNumber,
-        bio: bio || userDetail.bio
+        phoneNumber: phoneNumber || userDetail.phoneNumber
       });
     }
 
@@ -177,10 +181,11 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
         username: user.username,
         email: user.email,
         secondaryEmail: userDetail.secondaryEmail,
-        fullName: userDetail.fullName,
+        firstName: userDetail.firstName,
+        middleName: userDetail.middleName,
+        lastEmail: userDetail.lastEmail,
         dateOfBirth: userDetail.dateOfBirth,
-        phoneNumber: userDetail.phoneNumber,
-        bio: userDetail.bio
+        phoneNumber: userDetail.phoneNumber
       }
     };
     res.json(response);
