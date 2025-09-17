@@ -52,8 +52,7 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     const userDetail = user.userDetail || {
       secondaryEmail: null,
       firstName: null,
-      middleName: null,
-      lastEmail: null,
+      lastName: null,
       dateOfBirth: null,
       phoneNumber: null,
       profilePicture: null
@@ -66,11 +65,11 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
         id: user.id,
         username: user.username,
         email: user.email,
-        lastLogin: user.lastLogin,
+        role: user.role,
+        isVerified: user.isVerified,
         secondaryEmail: userDetail.secondaryEmail,
         firstName: userDetail.firstName,
-        middleName: userDetail.middleName,
-        lastEmail: userDetail.lastEmail,
+        lastName: userDetail.lastName,
         dateOfBirth: userDetail.dateOfBirth,
         phoneNumber: userDetail.phoneNumber,
         profilePicture: userDetail.profilePicture
@@ -125,7 +124,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       return;
     }
 
-    const { username, email, firstName, middleName, lastEmail, secondaryEmail, dateOfBirth, phoneNumber } = req.body;
+    const { username, email, firstName, lastName, secondaryEmail, dateOfBirth, phoneNumber } = req.body;
 
     // Check if email is already taken
     if (email && email !== user.email) {
@@ -156,8 +155,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
         userId: user.id,
         secondaryEmail,
         firstName,
-        middleName,
-        lastEmail,
+        lastName,
         dateOfBirth,
         phoneNumber
       });
@@ -166,8 +164,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       await userDetail.update({
         secondaryEmail: secondaryEmail || userDetail.secondaryEmail,
         firstName: firstName || userDetail.firstName,
-        middleName: middleName || userDetail.middleName,
-        lastEmail: lastEmail || userDetail.lastEmail,
+        lastName: lastName || userDetail.lastName,
         dateOfBirth: dateOfBirth || userDetail.dateOfBirth,
         phoneNumber: phoneNumber || userDetail.phoneNumber
       });
@@ -182,8 +179,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
         email: user.email,
         secondaryEmail: userDetail.secondaryEmail,
         firstName: userDetail.firstName,
-        middleName: userDetail.middleName,
-        lastEmail: userDetail.lastEmail,
+        lastName: userDetail.lastName,
         dateOfBirth: userDetail.dateOfBirth,
         phoneNumber: userDetail.phoneNumber
       }

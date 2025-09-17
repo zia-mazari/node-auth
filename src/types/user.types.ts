@@ -2,11 +2,12 @@ export interface IUserDetail {
   id: string;
   userId: string;
   secondaryEmail?: string;
-  fullName?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
   dateOfBirth?: Date;
   phoneNumber?: string;
   profilePicture?: string;
-  bio?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,7 +17,8 @@ export interface IUser {
   username: string;
   email: string;
   password: string;
-  lastLogin?: Date;
+  role: string;
+  isVerified: boolean;
   userDetail?: IUserDetail;
   createdAt?: Date;
   updatedAt?: Date;

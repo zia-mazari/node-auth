@@ -66,9 +66,7 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    // Update last login
-    user.lastLogin = new Date();
-    await user.save();
+    // User authenticated successfully
 
     // Generate token
     const token = jwt.sign(

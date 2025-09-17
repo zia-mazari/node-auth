@@ -8,7 +8,7 @@ interface IUserDetail {
   secondaryEmail?: string;
   firstName?: string;
   middleName?: string;
-  lastEmail?: string;
+  lastName?: string;
   dateOfBirth?: Date;
   phoneNumber?: string;
   profilePicture?: string;
@@ -24,7 +24,7 @@ export class UserDetail extends Model<IUserDetail, UserDetailCreationAttributes>
   public secondaryEmail!: string;
   public firstName!: string;
   public middleName!: string;
-  public lastEmail!: string;
+  public lastName!: string;
   public dateOfBirth!: Date;
   public phoneNumber!: string;
   public profilePicture!: string;
@@ -64,10 +64,10 @@ UserDetail.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    lastEmail: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     dateOfBirth: {
       type: DataTypes.DATEONLY,
       allowNull: true,

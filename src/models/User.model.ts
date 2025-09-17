@@ -4,14 +4,15 @@ import { sequelize } from '../config/database.config';
 import { IUser } from '../types/user.types';
 import { UserDetail } from './UserDetail.model';
 
-interface UserCreationAttributes extends Optional<IUser, 'id' | 'lastLogin'> {}
+interface UserCreationAttributes extends Optional<IUser, 'id'> {}
 
 export class User extends Model<IUser, UserCreationAttributes> implements IUser {
   public id!: string;
   public username!: string;
   public email!: string;
   public password!: string;
-  public lastLogin!: Date;
+  public role!: string;
+  public isVerified!: boolean;
 
   // Association methods
   public createUserDetail!: HasOneCreateAssociationMixin<UserDetail>;
@@ -46,9 +47,13 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastLogin: {
-      type: DataTypes.DATE,
-      allowNull: true,
+    role: {
+      type: DataTypes.ENUM('user', 'admin'),
+      defaultValue: 'user',
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {

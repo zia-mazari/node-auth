@@ -1,8 +1,9 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('users', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -22,12 +23,13 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      isActive: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true
+      role: {
+        type: Sequelize.ENUM('user', 'admin'),
+        defaultValue: 'user'
       },
-      lastLogin: {
-        type: Sequelize.DATE
+      isVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
@@ -40,7 +42,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('users');
   }
 };

@@ -104,8 +104,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Update last login time
-    await user.update({ lastLogin: new Date() });
+    // User successfully authenticated
 
     const token = jwt.sign(
       { 

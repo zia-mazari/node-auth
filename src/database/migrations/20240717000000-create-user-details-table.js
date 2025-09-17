@@ -7,9 +7,9 @@ module.exports = {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
+        primaryKey: true
       },
-      user_id: {
+      userId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -19,43 +19,37 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      secondary_email: {
+      firstName: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: true
       },
-      first_name: {
+      lastName: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: true
       },
-      middle_name: {
+      secondaryEmail: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: true
       },
-      last_email: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      date_of_birth: {
+      dateOfBirth: {
         type: Sequelize.DATEONLY,
-        allowNull: true,
+        allowNull: true
       },
-      phone_number: {
+      phoneNumber: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: true
       },
-      profile_picture: {
+      profilePicture: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: true
       },
-      created_at: {
-        type: Sequelize.DATE,
+      createdAt: {
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        type: Sequelize.DATE
       },
-      updated_at: {
-        type: Sequelize.DATE,
+      updatedAt: {
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        type: Sequelize.DATE
       }
     });
   },
