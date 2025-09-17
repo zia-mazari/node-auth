@@ -1,11 +1,14 @@
 import express from 'express';
 import * as userController from '../controllers/user.controller';
+import { authenticateToken } from '../middlewares/auth.middleware';
+import { validateRequest } from '../middlewares/validation.middleware';
+import { updateProfileSchema } from '../utils/validations/user.validation';
 
 const router = express.Router();
 
 // Protected routes
-router.get('/profile', userController.getProfile);
-router.put('/profile', userController.updateProfile);
-router.put('/password', userController.updatePassword);
+router.get('/profile', authenticateToken, userController.getProfile);
+router.put('/profile', authenticateToken, validateRequest(updateProfileSchema), userController.updateProfile);
+router.put('/password', authenticateToken, userController.updatePassword);
 
 export default router;

@@ -25,7 +25,11 @@ interface ResponseData {
  */
 export const getProfile = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {
+    console.log('USER CONTROLLER - getProfile called');
+    console.log('USER CONTROLLER - req.user:', JSON.stringify(req.user));
+    
     if (!req.user) {
+      console.log('USER CONTROLLER - User not authenticated');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_AUTHENTICATED',
@@ -35,11 +39,15 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
       return;
     }
 
+    console.log('USER CONTROLLER - Looking up user with ID:', req.user.id);
     const user = await User.findByPk(req.user.id, {
       include: [{ model: UserDetail, as: 'userDetail' }]
     });
     
+    console.log('USER CONTROLLER - User found:', user ? 'Yes' : 'No');
+    
     if (!user) {
+      console.log('USER CONTROLLER - User not found in database');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_FOUND',
@@ -48,11 +56,12 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
       res.status(404).json(response);
       return;
     }
+    
+    console.log('USER CONTROLLER - User data retrieved successfully');
 
     const userDetail = user.user_detail || {
       user_id: user.id,
       first_name: null,
-      middle_name: null,
       last_name: null,
       gender: null,
       date_of_birth: null,
@@ -100,7 +109,13 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
  */
 export const updateProfile = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {
+    console.log('UPDATE PROFILE - Request body:', JSON.stringify(req.body));
+    
+    // Ensure req.body exists
+    req.body = req.body || {};
+    
     if (!req.user) {
+      console.log('UPDATE PROFILE - User not authenticated');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_AUTHENTICATED',
@@ -111,16 +126,34 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     }
 
     const user = await User.findByPk(req.user.id, {
-      include: [{ model: UserDetail, as: 'userDetail' }]
+      include: [{ model: UserDetail, as: 'user_detail' }]
     });
     
     if (!user) {
+      console.log('UPDATE PROFILE - User not found in database');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_FOUND',
         data: null
       };
       res.status(404).json(response);
+      return;
+    }
+    
+    // Check if request body is empty
+    if (Object.keys(req.body).length === 0) {
+      console.log('UPDATE PROFILE - Empty request body, returning current profile');
+      const response: ResponseData = {
+        success: true,
+        message: 'NO_CHANGES_REQUESTED',
+        data: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          ...user.userDetail?.dataValues
+        }
+      };
+      res.status(200).json(response);
       return;
     }
 
@@ -147,26 +180,30 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     });
     
     // Create or update user details
-    let userDetail = user.user_detail;
+    let userDetail = user.userDetail;
+    
+    console.log('UPDATE PROFILE - User detail found:', userDetail ? 'Yes' : 'No');
     
     if (!userDetail) {
       // Create new user detail if it doesn't exist
+      console.log('UPDATE PROFILE - Creating new user detail');
       userDetail = await UserDetail.create({
         user_id: user.id,
-        first_name: firstName,
-        last_name: lastName,
-        gender,
-        date_of_birth: dateOfBirth,
-        phone_number: phoneNumber
+        first_name: firstName || null,
+        last_name: lastName || null,
+        gender: gender || null,
+        date_of_birth: dateOfBirth || null,
+        phone_number: phoneNumber || null
       });
     } else {
       // Update existing user detail
+      console.log('UPDATE PROFILE - Updating existing user detail');
       await userDetail.update({
-      first_name: firstName || userDetail.first_name,
-      last_name: lastName || userDetail.last_name,
-      gender: gender || userDetail.gender,
-      date_of_birth: dateOfBirth || userDetail.date_of_birth,
-      phone_number: phoneNumber || userDetail.phone_number
+        first_name: firstName !== undefined ? firstName : userDetail.first_name,
+        last_name: lastName !== undefined ? lastName : userDetail.last_name,
+        gender: gender !== undefined ? gender : userDetail.gender,
+        date_of_birth: dateOfBirth !== undefined ? dateOfBirth : userDetail.date_of_birth,
+        phone_number: phoneNumber !== undefined ? phoneNumber : userDetail.phone_number
       });
     }
 

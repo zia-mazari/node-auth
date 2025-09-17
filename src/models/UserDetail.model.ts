@@ -6,7 +6,6 @@ interface IUserDetail {
   id: string;
   user_id: string;
   first_name?: string;
-  middle_name?: string;
   last_name?: string;
   gender?: string;
   date_of_birth?: Date;
@@ -22,7 +21,6 @@ export class UserDetail extends Model<IUserDetail, UserDetailCreationAttributes>
   public id!: string;
   public user_id!: string;
   public first_name!: string;
-  public middle_name!: string;
   public last_name!: string;
   public gender!: string;
   public date_of_birth!: Date;
@@ -51,10 +49,6 @@ UserDetail.init(
     },
 
     first_name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    middle_name: {
       type: DataTypes.STRING,
       allowNull: true,
     },

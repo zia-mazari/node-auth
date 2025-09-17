@@ -118,16 +118,23 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // User successfully authenticated
-
+    console.log('AUTH CONTROLLER - Login successful for user:', user.id);
+    
+    const tokenPayload = { 
+      user_id: user.id, 
+      username: user.username,
+      email: user.email
+    };
+    
+    console.log('AUTH CONTROLLER - Creating token with payload:', JSON.stringify(tokenPayload));
+    
     const token = jwt.sign(
-      { 
-        userId: user.id, 
-        username: user.username,
-        email: user.email
-      },
+      tokenPayload,
       process.env.JWT_SECRET!,
       { expiresIn: '1h' }
     );
+    
+    console.log('AUTH CONTROLLER - Token created successfully');
 
     const response: ResponseData = {
       success: true,

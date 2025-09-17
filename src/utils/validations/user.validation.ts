@@ -66,4 +66,6 @@ export const updateProfileSchema = Joi.object<ProfileUpdateSchema>({
   bio: Joi.string().max(500).messages({
     'string.max': 'BIO_TOO_LONG'
   })
-}).min(1).unknown(true);
+}).min(1).messages({
+  'object.min': 'AT_LEAST_ONE_FIELD_REQUIRED'
+}).unknown(true);
