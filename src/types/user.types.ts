@@ -1,10 +1,10 @@
 export interface IUserDetail {
   id: string;
   userId: string;
-  secondaryEmail?: string;
   firstName?: string;
   middleName?: string;
   lastName?: string;
+  gender?: string;
   dateOfBirth?: Date;
   phoneNumber?: string;
   profilePicture?: string;

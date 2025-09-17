@@ -50,9 +50,9 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     }
 
     const userDetail = user.userDetail || {
-      secondaryEmail: null,
       firstName: null,
       lastName: null,
+      gender: null,
       dateOfBirth: null,
       phoneNumber: null,
       profilePicture: null
@@ -67,9 +67,9 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,
-        secondaryEmail: userDetail.secondaryEmail,
         firstName: userDetail.firstName,
         lastName: userDetail.lastName,
+        gender: userDetail.gender,
         dateOfBirth: userDetail.dateOfBirth,
         phoneNumber: userDetail.phoneNumber,
         profilePicture: userDetail.profilePicture
@@ -124,7 +124,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       return;
     }
 
-    const { username, email, firstName, lastName, secondaryEmail, dateOfBirth, phoneNumber } = req.body;
+    const { username, email, firstName, lastName, dateOfBirth, phoneNumber, gender } = req.body;
 
     // Check if email is already taken
     if (email && email !== user.email) {
@@ -153,18 +153,18 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       // Create new user detail if it doesn't exist
       userDetail = await UserDetail.create({
         userId: user.id,
-        secondaryEmail,
         firstName,
         lastName,
+        gender,
         dateOfBirth,
         phoneNumber
       });
     } else {
       // Update existing user detail
       await userDetail.update({
-        secondaryEmail: secondaryEmail || userDetail.secondaryEmail,
         firstName: firstName || userDetail.firstName,
         lastName: lastName || userDetail.lastName,
+        gender: gender || userDetail.gender,
         dateOfBirth: dateOfBirth || userDetail.dateOfBirth,
         phoneNumber: phoneNumber || userDetail.phoneNumber
       });
@@ -177,9 +177,9 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
         id: user.id,
         username: user.username,
         email: user.email,
-        secondaryEmail: userDetail.secondaryEmail,
         firstName: userDetail.firstName,
         lastName: userDetail.lastName,
+        gender: userDetail.gender,
         dateOfBirth: userDetail.dateOfBirth,
         phoneNumber: userDetail.phoneNumber
       }

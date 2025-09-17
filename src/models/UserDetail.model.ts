@@ -5,10 +5,10 @@ import User from './User.model';
 interface IUserDetail {
   id: string;
   userId: string;
-  secondaryEmail?: string;
   firstName?: string;
   middleName?: string;
   lastName?: string;
+  gender?: string;
   dateOfBirth?: Date;
   phoneNumber?: string;
   profilePicture?: string;
@@ -21,10 +21,10 @@ interface UserDetailCreationAttributes extends Optional<IUserDetail, 'id'> {}
 export class UserDetail extends Model<IUserDetail, UserDetailCreationAttributes> implements IUserDetail {
   public id!: string;
   public userId!: string;
-  public secondaryEmail!: string;
   public firstName!: string;
   public middleName!: string;
   public lastName!: string;
+  public gender!: string;
   public dateOfBirth!: Date;
   public phoneNumber!: string;
   public profilePicture!: string;
@@ -49,13 +49,7 @@ UserDetail.init(
         key: 'id'
       }
     },
-    secondaryEmail: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        isEmail: true,
-      },
-    },
+
     firstName: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -68,6 +62,10 @@ UserDetail.init(
         type: DataTypes.STRING,
         allowNull: true,
       },
+    gender: {
+      type: DataTypes.ENUM('male', 'female', 'other'),
+      allowNull: true,
+    },
     dateOfBirth: {
       type: DataTypes.DATEONLY,
       allowNull: true,
