@@ -27,11 +27,24 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const userData: IUserInput = req.body;
 
-    const existingUser = await User.findOne({ where: { email: userData.email } });
-    if (existingUser) {
+    // Check if email already exists
+    const existingEmail = await User.findOne({ where: { email: userData.email } });
+    if (existingEmail) {
       const response: ResponseData = {
         success: false,
-        message: 'User already exists',
+        message: 'EMAIL_ALREADY_EXISTS',
+        data: null
+      };
+      res.status(409).json(response);
+      return;
+    }
+    
+    // Check if username already exists
+    const existingUsername = await User.findOne({ where: { username: userData.username } });
+    if (existingUsername) {
+      const response: ResponseData = {
+        success: false,
+        message: 'USERNAME_ALREADY_EXISTS',
         data: null
       };
       res.status(409).json(response);
@@ -51,7 +64,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const response: ResponseData = {
       success: true,
-      message: 'Registration successful',
+      message: 'REGISTRATION_SUCCESSFUL',
       data: { token }
     };
     res.status(201).json(response);
@@ -59,7 +72,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     console.error('Registration error:', error);
     const response: ResponseData = {
       success: false,
-      message: 'Registration failed',
+      message: 'REGISTRATION_FAILED',
       data: null
     };
     res.status(500).json(response);
@@ -86,7 +99,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       const response: ResponseData = {
         success: false,
-        message: 'Invalid credentials',
+        message: 'INVALID_CREDENTIALS',
         data: null
       };
       res.status(401).json(response);
@@ -97,7 +110,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if (!isValidPassword) {
       const response: ResponseData = {
         success: false,
-        message: 'Invalid credentials',
+        message: 'INVALID_CREDENTIALS',
         data: null
       };
       res.status(401).json(response);
@@ -118,7 +131,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const response: ResponseData = {
       success: true,
-      message: 'Login successful',
+      message: 'LOGIN_SUCCESSFUL',
       data: { token }
     };
     res.json(response);
@@ -126,7 +139,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     console.error('Login error:', error);
     const response: ResponseData = {
       success: false,
-      message: 'Login failed',
+      message: 'LOGIN_FAILED',
       data: null
     };
     res.status(500).json(response);

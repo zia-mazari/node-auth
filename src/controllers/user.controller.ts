@@ -28,7 +28,7 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     if (!req.user) {
       const response: ResponseData = {
         success: false,
-        message: 'User not authenticated',
+        message: 'USER_NOT_AUTHENTICATED',
         data: null
       };
       res.status(401).json(response);
@@ -42,7 +42,7 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     if (!user) {
       const response: ResponseData = {
         success: false,
-        message: 'User not found',
+        message: 'USER_NOT_FOUND',
         data: null
       };
       res.status(404).json(response);
@@ -62,7 +62,7 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     
     const response: ResponseData = {
       success: true,
-      message: 'Profile retrieved successfully',
+      message: 'PROFILE_RETRIEVED_SUCCESSFULLY',
       data: {
         id: user.id,
         username: user.username,
@@ -80,7 +80,7 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     console.error('Get profile error:', error);
     const response: ResponseData = {
       success: false,
-      message: 'Server error',
+      message: 'SERVER_ERROR',
       data: null
     };
     res.status(500).json(response);
@@ -103,7 +103,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     if (!req.user) {
       const response: ResponseData = {
         success: false,
-        message: 'User not authenticated',
+        message: 'USER_NOT_AUTHENTICATED',
         data: null
       };
       res.status(401).json(response);
@@ -117,7 +117,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     if (!user) {
       const response: ResponseData = {
         success: false,
-        message: 'User not found',
+        message: 'USER_NOT_FOUND',
         data: null
       };
       res.status(404).json(response);
@@ -132,7 +132,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       if (existingUser) {
         const response: ResponseData = {
           success: false,
-          message: 'Email is already in use',
+          message: 'EMAIL_ALREADY_IN_USE',
           data: null
         };
         res.status(400).json(response);
@@ -172,7 +172,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
 
     const response: ResponseData = {
       success: true,
-      message: 'Profile updated successfully',
+      message: 'PROFILE_UPDATED_SUCCESSFULLY',
       data: {
         id: user.id,
         username: user.username,
@@ -189,7 +189,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     console.error('Update profile error:', error);
     const response: ResponseData = {
       success: false,
-      message: 'Failed to update profile',
+      message: 'PROFILE_UPDATE_FAILED',
       data: null
     };
     res.status(500).json(response);
@@ -212,7 +212,7 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
     if (!req.user) {
       const response: ResponseData = {
         success: false,
-        message: 'User not authenticated',
+        message: 'USER_NOT_AUTHENTICATED',
         data: null
       };
       res.status(401).json(response);
@@ -223,7 +223,7 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
     if (!user) {
       const response: ResponseData = {
         success: false,
-        message: 'User not found',
+        message: 'USER_NOT_FOUND',
         data: null
       };
       res.status(404).json(response);
@@ -237,7 +237,7 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
     if (!isValidPassword) {
       const response: ResponseData = {
         success: false,
-        message: 'Current password is incorrect',
+        message: 'CURRENT_PASSWORD_INCORRECT',
         data: null
       };
       res.status(401).json(response);
@@ -252,7 +252,7 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
 
     const response: ResponseData = {
       success: true,
-      message: 'Password updated successfully',
+      message: 'PASSWORD_UPDATED_SUCCESSFULLY',
       data: null
     };
     res.json(response);
@@ -260,7 +260,7 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
     console.error('Update password error:', error);
     const response: ResponseData = {
       success: false,
-      message: 'Failed to update password',
+      message: 'PASSWORD_UPDATE_FAILED',
       data: null
     };
     res.status(500).json(response);

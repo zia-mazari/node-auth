@@ -46,7 +46,6 @@ export const updateNameSchema = Joi.object<UpdateNameSchema>({
 
 export interface ProfileUpdateSchema {
   fullName?: string;
-  secondaryEmail?: string;
   dateOfBirth?: string;
   phoneNumber?: string;
   bio?: string;
@@ -56,9 +55,6 @@ export const updateProfileSchema = Joi.object<ProfileUpdateSchema>({
   fullName: Joi.string().min(3).max(50).messages({
     'string.min': 'FULLNAME_TOO_SHORT',
     'string.max': 'FULLNAME_TOO_LONG'
-  }),
-  secondaryEmail: Joi.string().email().messages({
-    'string.email': 'INVALID_EMAIL'
   }),
   dateOfBirth: Joi.date().iso().messages({
     'date.base': 'INVALID_DATE',
