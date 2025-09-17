@@ -49,13 +49,15 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
       return;
     }
 
-    const userDetail = user.userDetail || {
-      firstName: null,
-      lastName: null,
+    const userDetail = user.user_detail || {
+      user_id: user.id,
+      first_name: null,
+      middle_name: null,
+      last_name: null,
       gender: null,
-      dateOfBirth: null,
-      phoneNumber: null,
-      profilePicture: null
+      date_of_birth: null,
+      phone_number: null,
+      profile_picture: null
     };
     
     const response: ResponseData = {
@@ -65,14 +67,12 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
-        firstName: userDetail.firstName,
-        lastName: userDetail.lastName,
-        gender: userDetail.gender,
-        dateOfBirth: userDetail.dateOfBirth,
-        phoneNumber: userDetail.phoneNumber,
-        profilePicture: userDetail.profilePicture
+        is_verified: user.is_verified,
+         first_name: userDetail.first_name,
+         last_name: userDetail.last_name,
+         date_of_birth: userDetail.date_of_birth,
+         phone_number: userDetail.phone_number,
+         profile_picture: userDetail.profile_picture
       }
     };
     res.json(response);
@@ -147,26 +147,26 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     });
     
     // Create or update user details
-    let userDetail = user.userDetail;
+    let userDetail = user.user_detail;
     
     if (!userDetail) {
       // Create new user detail if it doesn't exist
       userDetail = await UserDetail.create({
-        userId: user.id,
-        firstName,
-        lastName,
+        user_id: user.id,
+        first_name: firstName,
+        last_name: lastName,
         gender,
-        dateOfBirth,
-        phoneNumber
+        date_of_birth: dateOfBirth,
+        phone_number: phoneNumber
       });
     } else {
       // Update existing user detail
       await userDetail.update({
-        firstName: firstName || userDetail.firstName,
-        lastName: lastName || userDetail.lastName,
-        gender: gender || userDetail.gender,
-        dateOfBirth: dateOfBirth || userDetail.dateOfBirth,
-        phoneNumber: phoneNumber || userDetail.phoneNumber
+      first_name: firstName || userDetail.first_name,
+      last_name: lastName || userDetail.last_name,
+      gender: gender || userDetail.gender,
+      date_of_birth: dateOfBirth || userDetail.date_of_birth,
+      phone_number: phoneNumber || userDetail.phone_number
       });
     }
 
@@ -177,11 +177,11 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
         id: user.id,
         username: user.username,
         email: user.email,
-        firstName: userDetail.firstName,
-        lastName: userDetail.lastName,
-        gender: userDetail.gender,
-        dateOfBirth: userDetail.dateOfBirth,
-        phoneNumber: userDetail.phoneNumber
+        first_name: userDetail.first_name,
+      last_name: userDetail.last_name,
+      gender: userDetail.gender,
+      date_of_birth: userDetail.date_of_birth,
+      phone_number: userDetail.phone_number
       }
     };
     res.json(response);

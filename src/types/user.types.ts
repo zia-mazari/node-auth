@@ -1,15 +1,15 @@
 export interface IUserDetail {
   id: string;
-  userId: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
+  user_id: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
   gender?: string;
-  dateOfBirth?: Date;
-  phoneNumber?: string;
-  profilePicture?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  date_of_birth?: Date;
+  phone_number?: string;
+  profile_picture?: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface IUser {
@@ -17,11 +17,10 @@ export interface IUser {
   username: string;
   email: string;
   password: string;
-  role: string;
-  isVerified: boolean;
-  userDetail?: IUserDetail;
-  createdAt?: Date;
-  updatedAt?: Date;
+  is_verified: boolean;
+  user_detail?: IUserDetail;
+   created_at?: Date;
+   updated_at?: Date;
 }
 
 export interface IUserInput extends Omit<IUser, 'id' | 'lastLogin' | 'createdAt' | 'updatedAt'> {

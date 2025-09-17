@@ -20,18 +20,18 @@ module.exports = {
     for (const user of users) {
       userDetails.push({
         id: uuidv4(),
-        userId: user.id,
-        firstName: user.email === 'mazari.zia@gmail.com' ? 'Mazari' : 
+        user_id: user.id,
+        first_name: user.email === 'mazari.zia@gmail.com' ? 'Mazari' : 
                    user.email === 'testuser1@example.com' ? 'Test' : 'Demo',
-        lastName: user.email === 'mazari.zia@gmail.com' ? 'Zia' : 
+        last_name: user.email === 'mazari.zia@gmail.com' ? 'Zia' : 
                   user.email === 'testuser1@example.com' ? 'User1' : 'User2',
         gender: user.email === 'mazari.zia@gmail.com' ? 'male' : 
                user.email === 'testuser1@example.com' ? 'female' : 'other',
-        dateOfBirth: null,
-        phoneNumber: null,
-        profilePicture: null,
-        createdAt: now,
-        updatedAt: now
+        date_of_birth: null,
+        phone_number: null,
+        profile_picture: null,
+        created_at: now,
+        updated_at: now
       });
     }
 

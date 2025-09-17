@@ -11,16 +11,15 @@ export class User extends Model<IUser, UserCreationAttributes> implements IUser 
   public username!: string;
   public email!: string;
   public password!: string;
-  public role!: string;
-  public isVerified!: boolean;
+  public is_verified!: boolean;
 
   // Association methods
   public createUserDetail!: HasOneCreateAssociationMixin<UserDetail>;
-  public readonly userDetail?: UserDetail;
+  public readonly user_detail?: UserDetail;
 
   // Timestamps
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
 }
 
 User.init(
@@ -47,11 +46,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      defaultValue: 'user',
-    },
-    isVerified: {
+    is_verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
@@ -67,12 +62,12 @@ User.init(
 // Define the association
 User.hasOne(UserDetail, {
   sourceKey: 'id',
-  foreignKey: 'userId',
-  as: 'userDetail'
+  foreignKey: 'user_id',
+  as: 'user_detail'
 });
 
 UserDetail.belongsTo(User, {
-  foreignKey: 'userId',
+  foreignKey: 'user_id',
   as: 'user'
 });
 

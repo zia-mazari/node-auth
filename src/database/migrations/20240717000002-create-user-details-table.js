@@ -9,7 +9,7 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
       },
-      userId: {
+      user_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -19,35 +19,35 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      firstName: {
+      first_name: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      lastName: {
+      last_name: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      secondaryEmail: {
-        type: Sequelize.STRING,
+      gender: {
+        type: Sequelize.ENUM('male', 'female', 'other'),
         allowNull: true
       },
-      dateOfBirth: {
+      date_of_birth: {
         type: Sequelize.DATEONLY,
         allowNull: true
       },
-      phoneNumber: {
+      phone_number: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      profilePicture: {
+      profile_picture: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

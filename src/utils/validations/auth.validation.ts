@@ -7,7 +7,6 @@ export interface LoginSchema {
 
 export interface SignupSchema extends LoginSchema {
   username: string;
-  name: string;
   confirmPassword: string;
 }
 
@@ -39,15 +38,6 @@ export const signupSchema = Joi.object<SignupSchema>({
       'string.max': 'USERNAME_TOO_LONG',
       'string.alphanum': 'USERNAME_INVALID_CHARS',
       'any.required': 'USERNAME_REQUIRED'
-    }),
-  name: Joi.string()
-    .min(3)
-    .max(30)
-    .required()
-    .messages({
-      'string.min': 'NAME_TOO_SHORT',
-      'string.max': 'NAME_TOO_LONG',
-      'any.required': 'NAME_REQUIRED'
     }),
   email: Joi.string()
     .email({ minDomainSegments: 2 })

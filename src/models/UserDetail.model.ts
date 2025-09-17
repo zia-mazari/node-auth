@@ -4,34 +4,34 @@ import User from './User.model';
 
 interface IUserDetail {
   id: string;
-  userId: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
+  user_id: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
   gender?: string;
-  dateOfBirth?: Date;
-  phoneNumber?: string;
-  profilePicture?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  date_of_birth?: Date;
+  phone_number?: string;
+  profile_picture?: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 interface UserDetailCreationAttributes extends Optional<IUserDetail, 'id'> {}
 
 export class UserDetail extends Model<IUserDetail, UserDetailCreationAttributes> implements IUserDetail {
   public id!: string;
-  public userId!: string;
-  public firstName!: string;
-  public middleName!: string;
-  public lastName!: string;
+  public user_id!: string;
+  public first_name!: string;
+  public middle_name!: string;
+  public last_name!: string;
   public gender!: string;
-  public dateOfBirth!: Date;
-  public phoneNumber!: string;
-  public profilePicture!: string;
+  public date_of_birth!: Date;
+  public phone_number!: string;
+  public profile_picture!: string;
 
   // Timestamps
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
 }
 
 UserDetail.init(
@@ -41,7 +41,7 @@ UserDetail.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -50,15 +50,15 @@ UserDetail.init(
       }
     },
 
-    firstName: {
+    first_name: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    middleName: {
+    middle_name: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    lastName: {
+    last_name: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -66,15 +66,15 @@ UserDetail.init(
       type: DataTypes.ENUM('male', 'female', 'other'),
       allowNull: true,
     },
-    dateOfBirth: {
+    date_of_birth: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    phoneNumber: {
+    phone_number: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    profilePicture: {
+    profile_picture: {
       type: DataTypes.STRING,
       allowNull: true,
     },

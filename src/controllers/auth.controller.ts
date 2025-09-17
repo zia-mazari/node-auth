@@ -41,7 +41,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const user = await User.create(userData);
     const token = jwt.sign(
       { 
-        userId: user.id, 
+        user_id: user.id, 
         username: user.username,
         email: user.email
       },
