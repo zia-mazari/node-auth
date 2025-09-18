@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { RequestWithUser } from '../types/express.types';
-import { UserService } from '../services/user.service';
+import { ProfileService, PasswordService } from '../services/user';
 import { ApiHelper } from '../utils/helpers/api.helper';
 
 /**
@@ -19,7 +19,7 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
     return ApiHelper.unauthorized(res);
   }
   
-  return UserService.getProfile(req.user.id, res);
+  return ProfileService.getProfile(req.user.id, res);
 };
 
 /**
@@ -45,7 +45,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
   
   const { firstName, lastName, gender, dateOfBirth, phoneNumber, profilePicture } = req.body;
   
-  return UserService.updateProfile(req.user.id, { firstName, lastName, gender, dateOfBirth, phoneNumber, profilePicture }, res);
+  return ProfileService.updateProfile(req.user.id, { firstName, lastName, gender, dateOfBirth, phoneNumber, profilePicture }, res);
 };
 
 /**
@@ -66,5 +66,5 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
   
   const passwordData = req.body;
   
-  return UserService.updatePassword(req.user.id, passwordData, res);
+  return PasswordService.updatePassword(req.user.id, passwordData, res);
 };

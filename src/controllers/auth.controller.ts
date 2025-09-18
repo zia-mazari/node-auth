@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { IUserInput, IUserLogin } from '../types/user.types';
-import { AuthService } from '../services/auth.service';
+import { LoginService, RegisterService } from '../services/auth';
 
 /**
  * Register a new user
@@ -15,7 +15,7 @@ import { AuthService } from '../services/auth.service';
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
   const userData: IUserInput = req.body;
-  return AuthService.register(userData, res);
+  return RegisterService.register(userData, res);
 };
 
 /**
@@ -31,5 +31,5 @@ export const register = async (req: Request, res: Response): Promise<void> => {
  */
 export const login = async (req: Request, res: Response): Promise<void> => {
   const loginData: IUserLogin = req.body;
-  return AuthService.login(loginData, res);
+  return LoginService.login(loginData, res);
 };
