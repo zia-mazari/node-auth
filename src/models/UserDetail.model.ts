@@ -62,7 +62,7 @@ UserDetail.init(
     },
     dateOfBirth: {
       type: DataTypes.DATEONLY,
-      allowNull: true,
+      allowNull: true
     },
     phoneNumber: {
       type: DataTypes.STRING,

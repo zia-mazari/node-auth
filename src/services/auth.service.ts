@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { Response } from 'express';
 import User from '../models/User.model';
 import { IUserInput, IUserLogin } from '../types/user.types';
+import { ApiHelper, HttpStatus } from '../utils/helpers/api.helper';
 
 export interface AuthResponse {
   user: User;
@@ -10,71 +12,97 @@ export interface AuthResponse {
 
 export class AuthService {
   /**
-   * Register a new user in the system
+   * Register a new user in the system and send API response
    * 
    * @param userData - User registration data including username, email, and password
-   * @returns Promise<User> - The newly created user object
+   * @param res - Express response object
+   * @returns Promise<void>
    * 
    * @description
-   * Checks if a user with the provided email already exists.
+   * Checks if a user with the provided email or username already exists.
    * If not, creates a new user record in the database.
-   * Password hashing is handled by the User model hooks.
-   * @throws Error if user with the email already exists
+   * Sends appropriate API response.
    */
-  static async register(userData: IUserInput): Promise<User> {
-    // Check if user exists
-    const existingUser = await User.findOne({
-      where: {
-        email: userData.email
+  static async register(userData: IUserInput, res: Response): Promise<void> {
+    try {
+      // Check if email already exists
+      const existingEmail = await User.findOne({ where: { email: userData.email } });
+      if (existingEmail) {
+        return ApiHelper.conflict(res);
       }
-    });
+      
+      // Check if username already exists
+      const existingUsername = await User.findOne({ where: { username: userData.username } });
+      if (existingUsername) {
+        return ApiHelper.conflict(res);
+      }
 
-    if (existingUser) {
-      throw new Error('User already exists');
+      // Create user
+      const user = await User.create(userData);
+      
+      // Generate token
+      const token = jwt.sign(
+        { 
+          userId: user.id, 
+          username: user.username,
+          email: user.email
+        },
+        process.env.JWT_SECRET!,
+        { expiresIn: '1h' }
+      );
+
+      return ApiHelper.created(res, 'REGISTRATION_SUCCESSFUL', { token });
+    } catch (error) {
+      console.error('AUTH SERVICE - Registration error:', error);
+      return ApiHelper.error(res, 'REGISTRATION_FAILED', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    // Create user
-    const user = await User.create(userData);
-    return user;
   }
 
   /**
-   * Authenticate a user and generate JWT token
+   * Authenticate a user and send API response
    * 
-   * @param email - User's email address
-   * @param password - User's password (plain text)
-   * @returns Promise<AuthResponse> - Object containing user data and JWT token
+   * @param loginData - User's login credentials
+   * @param res - Express response object
+   * @returns Promise<void>
    * 
    * @description
    * Validates user credentials and generates authentication token.
-   * Updates the user's last login timestamp on successful authentication.
-   * @throws Error if credentials are invalid
+   * Sends appropriate API response.
    */
-  static async login(email: string, password: string): Promise<AuthResponse> {
-    // Find user
-    const user = await User.findOne({
-      where: { email }
-    });
+  static async login(loginData: IUserLogin, res: Response): Promise<void> {
+    try {
+      const { email, password } = loginData;
+      
+      // Find user
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return ApiHelper.unauthorized(res);
+      }
 
-    if (!user) {
-      throw new Error('Invalid credentials');
+      // Check password
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        return ApiHelper.unauthorized(res);
+      }
+
+      // User authenticated successfully
+      const tokenPayload = { 
+        userId: user.id, 
+        username: user.username,
+        email: user.email
+      };
+      
+      // Generate token
+      const token = jwt.sign(
+        tokenPayload,
+        process.env.JWT_SECRET!,
+        { expiresIn: '1h' }
+      );
+
+      return ApiHelper.success(res, 'LOGIN_SUCCESSFUL', { token });
+    } catch (error) {
+      console.error('AUTH SERVICE - Login error:', error);
+      return ApiHelper.error(res, 'LOGIN_FAILED', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    // Check password
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      throw new Error('Invalid credentials');
-    }
-
-    // User authenticated successfully
-
-    // Generate token
-    const token = jwt.sign(
-      { userId: user.id, username: user.username },
-      process.env.JWT_SECRET!,
-      { expiresIn: '1h' }
-    );
-
-    return { user, token };
   }
 }

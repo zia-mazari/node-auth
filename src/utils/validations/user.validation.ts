@@ -45,27 +45,41 @@ export const updateNameSchema = Joi.object<UpdateNameSchema>({
 }).unknown(true);
 
 export interface ProfileUpdateSchema {
-  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  gender?: string;
   dateOfBirth?: string;
   phoneNumber?: string;
-  bio?: string;
+  profilePicture?: string;
 }
 
 export const updateProfileSchema = Joi.object<ProfileUpdateSchema>({
-  fullName: Joi.string().min(3).max(50).messages({
-    'string.min': 'FULLNAME_TOO_SHORT',
-    'string.max': 'FULLNAME_TOO_LONG'
+  firstName: Joi.string().min(2).max(50).messages({
+    'string.min': 'FIRSTNAME_TOO_SHORT',
+    'string.max': 'FIRSTNAME_TOO_LONG'
   }),
-  dateOfBirth: Joi.date().iso().messages({
-    'date.base': 'INVALID_DATE',
-    'date.format': 'INVALID_DATE_FORMAT'
+  lastName: Joi.string().min(2).max(50).messages({
+    'string.min': 'LASTNAME_TOO_SHORT',
+    'string.max': 'LASTNAME_TOO_LONG'
   }),
-  phoneNumber: Joi.string().pattern(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/).messages({
-    'string.pattern.base': 'INVALID_PHONE_FORMAT'
+  gender: Joi.string().valid('male', 'female', 'other').messages({
+    'any.only': 'INVALID_GENDER'
   }),
-  bio: Joi.string().max(500).messages({
-    'string.max': 'BIO_TOO_LONG'
+  dateOfBirth: Joi.date().iso()
+    .min(new Date(Date.now() - 85 * 365.25 * 24 * 60 * 60 * 1000))
+    .max(new Date(Date.now() - 10 * 365.25 * 24 * 60 * 60 * 1000))
+    .messages({
+      'date.base': 'INVALID_DATE',
+      'date.format': 'INVALID_DATE_FORMAT',
+      'date.min': 'USER_TOO_OLD',
+      'date.max': 'USER_TOO_YOUNG'
+    }),
+  phoneNumber: Joi.string().messages({
+    'string.base': 'PHONE_MUST_BE_STRING'
+  }),
+  profilePicture: Joi.string().uri().messages({
+    'string.uri': 'INVALID_PROFILE_PICTURE_URL'
   })
 }).min(1).messages({
   'object.min': 'AT_LEAST_ONE_FIELD_REQUIRED'
-}).unknown(true);
+});

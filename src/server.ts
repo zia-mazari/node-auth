@@ -69,6 +69,7 @@ const startServer = async (): Promise<void> => {
     // Start server
     app.listen(PORT, () => {
       // Server running on specified port
+      console.log(`SERVER - Running on port ${PORT}`);
     });
   } catch (error) {
     console.error('SERVER - Startup error:', error);
