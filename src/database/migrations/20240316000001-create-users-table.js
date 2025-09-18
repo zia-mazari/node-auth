@@ -23,17 +23,20 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      is_verified: {
+      isVerified: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
+        field: 'isVerified'
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        field: 'createdAt'
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        field: 'updatedAt'
       }
     });
   },

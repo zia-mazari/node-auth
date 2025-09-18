@@ -14,7 +14,6 @@ export interface RequestWithToken extends Request {
 
 export interface TokenPayload {
   userId?: string;
-  user_id?: string;
   username?: string;
   email?: string;
   iat?: number;

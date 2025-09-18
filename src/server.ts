@@ -61,18 +61,17 @@ const startServer = async (): Promise<void> => {
     // Test database connection
     await testConnection();
     
-    // Sync database (in development only)
+    // Sync database in development mode
     if (process.env.NODE_ENV === 'development') {
       await sequelize.sync({ alter: true });
-      console.log('Database synced in development mode');
     }
 
     // Start server
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      // Server running on specified port
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('SERVER - Startup error:', error);
     process.exit(1);
   }
 };

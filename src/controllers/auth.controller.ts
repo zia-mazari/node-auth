@@ -54,7 +54,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const user = await User.create(userData);
     const token = jwt.sign(
       { 
-        user_id: user.id, 
+        userId: user.id, 
         username: user.username,
         email: user.email
       },
@@ -69,7 +69,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     };
     res.status(201).json(response);
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('AUTH CONTROLLER - Registration error:', error);
     const response: ResponseData = {
       success: false,
       message: 'REGISTRATION_FAILED',
@@ -118,23 +118,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // User successfully authenticated
-    console.log('AUTH CONTROLLER - Login successful for user:', user.id);
     
     const tokenPayload = { 
-      user_id: user.id, 
+      userId: user.id, 
       username: user.username,
       email: user.email
     };
-    
-    console.log('AUTH CONTROLLER - Creating token with payload:', JSON.stringify(tokenPayload));
     
     const token = jwt.sign(
       tokenPayload,
       process.env.JWT_SECRET!,
       { expiresIn: '1h' }
     );
-    
-    console.log('AUTH CONTROLLER - Token created successfully');
 
     const response: ResponseData = {
       success: true,
@@ -143,7 +138,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     };
     res.json(response);
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('AUTH CONTROLLER - Login error:', error);
     const response: ResponseData = {
       success: false,
       message: 'LOGIN_FAILED',

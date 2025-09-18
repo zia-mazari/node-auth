@@ -28,6 +28,7 @@ export const verifyAccessToken = (token: string): jwt.JwtPayload => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
     return decoded;
   } catch (error) {
+    console.error('TOKEN HELPER - Verification error:', error);
     throw new Error('Invalid token');
   }
 };
@@ -37,6 +38,7 @@ export const verifyRefreshToken = (token: string): jwt.JwtPayload => {
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as jwt.JwtPayload;
     return decoded;
   } catch (error) {
+    console.error('TOKEN HELPER - Verification error:', error);
     throw new Error('Invalid refresh token');
   }
 };

@@ -25,11 +25,7 @@ interface ResponseData {
  */
 export const getProfile = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {
-    console.log('USER CONTROLLER - getProfile called');
-    console.log('USER CONTROLLER - req.user:', JSON.stringify(req.user));
-    
     if (!req.user) {
-      console.log('USER CONTROLLER - User not authenticated');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_AUTHENTICATED',
@@ -39,15 +35,11 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
       return;
     }
 
-    console.log('USER CONTROLLER - Looking up user with ID:', req.user.id);
     const user = await User.findByPk(req.user.id, {
       include: [{ model: UserDetail, as: 'userDetail' }]
     });
     
-    console.log('USER CONTROLLER - User found:', user ? 'Yes' : 'No');
-    
     if (!user) {
-      console.log('USER CONTROLLER - User not found in database');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_FOUND',
@@ -56,17 +48,15 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
       res.status(404).json(response);
       return;
     }
-    
-    console.log('USER CONTROLLER - User data retrieved successfully');
 
-    const userDetail = user.user_detail || {
-      user_id: user.id,
-      first_name: null,
-      last_name: null,
+    const userDetail = user.userDetail || {
+      userId: user.id,
+      firstName: null,
+      lastName: null,
       gender: null,
-      date_of_birth: null,
-      phone_number: null,
-      profile_picture: null
+      dateOfBirth: null,
+      phoneNumber: null,
+      profilePicture: null
     };
     
     const response: ResponseData = {
@@ -75,18 +65,19 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
       data: {
         id: user.id,
         username: user.username,
-        email: user.email,
-        is_verified: user.is_verified,
-         first_name: userDetail.first_name,
-         last_name: userDetail.last_name,
-         date_of_birth: userDetail.date_of_birth,
-         phone_number: userDetail.phone_number,
-         profile_picture: userDetail.profile_picture
+      email: user.email,
+      isVerified: user.isVerified,
+      firstName: userDetail.firstName,
+      lastName: userDetail.lastName,
+      gender: userDetail.gender,
+      dateOfBirth: userDetail.dateOfBirth,
+      phoneNumber: userDetail.phoneNumber,
+      profilePicture: userDetail.profilePicture
       }
     };
     res.json(response);
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error('USER CONTROLLER - Get profile error:', error);
     const response: ResponseData = {
       success: false,
       message: 'SERVER_ERROR',
@@ -109,13 +100,10 @@ export const getProfile = async (req: RequestWithUser, res: Response): Promise<v
  */
 export const updateProfile = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {
-    console.log('UPDATE PROFILE - Request body:', JSON.stringify(req.body));
-    
     // Ensure req.body exists
     req.body = req.body || {};
     
     if (!req.user) {
-      console.log('UPDATE PROFILE - User not authenticated');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_AUTHENTICATED',
@@ -126,11 +114,10 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     }
 
     const user = await User.findByPk(req.user.id, {
-      include: [{ model: UserDetail, as: 'user_detail' }]
+      include: [{ model: UserDetail, as: 'userDetail' }]
     });
     
     if (!user) {
-      console.log('UPDATE PROFILE - User not found in database');
       const response: ResponseData = {
         success: false,
         message: 'USER_NOT_FOUND',
@@ -142,7 +129,6 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     
     // Check if request body is empty
     if (Object.keys(req.body).length === 0) {
-      console.log('UPDATE PROFILE - Empty request body, returning current profile');
       const response: ResponseData = {
         success: true,
         message: 'NO_CHANGES_REQUESTED',
@@ -150,7 +136,12 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
           id: user.id,
           username: user.username,
           email: user.email,
-          ...user.userDetail?.dataValues
+          firstName: user.userDetail?.firstName,
+          lastName: user.userDetail?.lastName,
+          gender: user.userDetail?.gender,
+          dateOfBirth: user.userDetail?.dateOfBirth,
+          phoneNumber: user.userDetail?.phoneNumber,
+          profilePicture: user.userDetail?.profilePicture
         }
       };
       res.status(200).json(response);
@@ -180,31 +171,27 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     });
     
     // Create or update user details
-    let userDetail = user.userDetail;
+let userDetail = user.userDetail;
     
-    console.log('UPDATE PROFILE - User detail found:', userDetail ? 'Yes' : 'No');
-    
-    if (!userDetail) {
-      // Create new user detail if it doesn't exist
-      console.log('UPDATE PROFILE - Creating new user detail');
-      userDetail = await UserDetail.create({
-        user_id: user.id,
-        first_name: firstName || null,
-        last_name: lastName || null,
-        gender: gender || null,
-        date_of_birth: dateOfBirth || null,
-        phone_number: phoneNumber || null
-      });
-    } else {
-      // Update existing user detail
-      console.log('UPDATE PROFILE - Updating existing user detail');
-      await userDetail.update({
-        first_name: firstName !== undefined ? firstName : userDetail.first_name,
-        last_name: lastName !== undefined ? lastName : userDetail.last_name,
-        gender: gender !== undefined ? gender : userDetail.gender,
-        date_of_birth: dateOfBirth !== undefined ? dateOfBirth : userDetail.date_of_birth,
-        phone_number: phoneNumber !== undefined ? phoneNumber : userDetail.phone_number
-      });
+if (!userDetail) {
+  // Create new user detail if it doesn't exist
+  userDetail = await UserDetail.create({
+    userId: user.id,
+    firstName: firstName || null,
+    lastName: lastName || null,
+    gender: gender || null,
+    dateOfBirth: dateOfBirth || null,
+    phoneNumber: phoneNumber || null
+  });
+} else {
+  // Update existing user detail
+  await userDetail.update({
+          firstName: firstName !== undefined ? firstName : userDetail.firstName,
+          lastName: lastName !== undefined ? lastName : userDetail.lastName,
+          gender: gender !== undefined ? gender : userDetail.gender,
+          dateOfBirth: dateOfBirth !== undefined ? dateOfBirth : userDetail.dateOfBirth,
+          phoneNumber: phoneNumber !== undefined ? phoneNumber : userDetail.phoneNumber
+        });
     }
 
     const response: ResponseData = {
@@ -212,21 +199,21 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
       message: 'PROFILE_UPDATED_SUCCESSFULLY',
       data: {
         id: user.id,
-        username: user.username,
-        email: user.email,
-        first_name: userDetail.first_name,
-      last_name: userDetail.last_name,
+      username: user.username,
+      email: user.email,
+      firstName: userDetail.firstName,
+      lastName: userDetail.lastName,
       gender: userDetail.gender,
-      date_of_birth: userDetail.date_of_birth,
-      phone_number: userDetail.phone_number
+      dateOfBirth: userDetail.dateOfBirth,
+      phoneNumber: userDetail.phoneNumber
       }
     };
     res.json(response);
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error('USER CONTROLLER - Update profile error:', error);
     const response: ResponseData = {
       success: false,
-      message: 'PROFILE_UPDATE_FAILED',
+      message: 'SERVER_ERROR',
       data: null
     };
     res.status(500).json(response);
@@ -294,7 +281,7 @@ export const updatePassword = async (req: RequestWithUser, res: Response): Promi
     };
     res.json(response);
   } catch (error) {
-    console.error('Update password error:', error);
+    console.error('USER CONTROLLER - Password update error:', error);
     const response: ResponseData = {
       success: false,
       message: 'PASSWORD_UPDATE_FAILED',

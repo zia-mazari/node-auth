@@ -15,27 +15,27 @@ module.exports = {
         username: 'mazari',
         email: 'mazari.zia@gmail.com',
         password: hashedPassword,
-        is_verified: true,
-        created_at: now,
-        updated_at: now
+        isVerified: true,
+        createdAt: now,
+        updatedAt: now
       },
       {
         id: uuidv4(),
         username: 'testuser1',
         email: 'testuser1@example.com',
         password: hashedPassword,
-        is_verified: true,
-        created_at: now,
-        updated_at: now
+        isVerified: true,
+        createdAt: now,
+        updatedAt: now
       },
       {
         id: uuidv4(),
         username: 'testuser2',
         email: 'testuser2@example.com',
         password: hashedPassword,
-        is_verified: true,
-        created_at: now,
-        updated_at: now
+        isVerified: true,
+        createdAt: now,
+        updatedAt: now
       }
     ]);
   },

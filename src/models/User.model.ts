@@ -11,15 +11,15 @@ export class User extends Model<IUser, UserCreationAttributes> implements IUser 
   public username!: string;
   public email!: string;
   public password!: string;
-  public is_verified!: boolean;
+  public isVerified!: boolean;
 
   // Association methods
   public createUserDetail!: HasOneCreateAssociationMixin<UserDetail>;
-  public readonly user_detail?: UserDetail;
+  public readonly userDetail?: UserDetail;
 
   // Timestamps
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
 User.init(
@@ -46,7 +46,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    is_verified: {
+    isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
@@ -55,19 +55,19 @@ User.init(
     sequelize,
     modelName: 'User',
     tableName: 'users',
-    underscored: true
+    underscored: false
   }
 );
 
 // Define the association
 User.hasOne(UserDetail, {
   sourceKey: 'id',
-  foreignKey: 'user_id',
-  as: 'user_detail'
+  foreignKey: 'userId',
+  as: 'userDetail'
 });
 
 UserDetail.belongsTo(User, {
-  foreignKey: 'user_id',
+  foreignKey: 'userId',
   as: 'user'
 });
 

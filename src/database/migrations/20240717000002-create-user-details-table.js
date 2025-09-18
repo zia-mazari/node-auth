@@ -9,9 +9,10 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
       },
-      user_id: {
+      userId: {
         type: Sequelize.UUID,
         allowNull: false,
+        field: 'userId',
         references: {
           model: 'users',
           key: 'id'
@@ -19,37 +20,44 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      first_name: {
+      firstName: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        field: 'firstName'
       },
-      last_name: {
+      lastName: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        field: 'lastName'
       },
       gender: {
         type: Sequelize.ENUM('male', 'female', 'other'),
         allowNull: true
       },
-      date_of_birth: {
+      dateOfBirth: {
         type: Sequelize.DATEONLY,
-        allowNull: true
+        allowNull: true,
+        field: 'dateOfBirth'
       },
-      phone_number: {
+      phoneNumber: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        field: 'phoneNumber'
       },
-      profile_picture: {
+      profilePicture: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        field: 'profilePicture'
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        field: 'createdAt'
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        field: 'updatedAt'
       }
     });
   },

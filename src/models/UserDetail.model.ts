@@ -4,32 +4,32 @@ import User from './User.model';
 
 interface IUserDetail {
   id: string;
-  user_id: string;
-  first_name?: string;
-  last_name?: string;
+  userId: string;
+  firstName?: string;
+  lastName?: string;
   gender?: string;
-  date_of_birth?: Date;
-  phone_number?: string;
-  profile_picture?: string;
-  created_at?: Date;
-  updated_at?: Date;
+  dateOfBirth?: Date;
+  phoneNumber?: string;
+  profilePicture?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface UserDetailCreationAttributes extends Optional<IUserDetail, 'id'> {}
 
 export class UserDetail extends Model<IUserDetail, UserDetailCreationAttributes> implements IUserDetail {
   public id!: string;
-  public user_id!: string;
-  public first_name!: string;
-  public last_name!: string;
+  public userId!: string;
+  public firstName!: string;
+  public lastName!: string;
   public gender!: string;
-  public date_of_birth!: Date;
-  public phone_number!: string;
-  public profile_picture!: string;
+  public dateOfBirth!: Date;
+  public phoneNumber!: string;
+  public profilePicture!: string;
 
   // Timestamps
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
 UserDetail.init(
@@ -39,7 +39,7 @@ UserDetail.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    user_id: {
+    userId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -48,11 +48,11 @@ UserDetail.init(
       }
     },
 
-    first_name: {
+    firstName: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    last_name: {
+    lastName: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -60,15 +60,15 @@ UserDetail.init(
       type: DataTypes.ENUM('male', 'female', 'other'),
       allowNull: true,
     },
-    date_of_birth: {
+    dateOfBirth: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    phone_number: {
+    phoneNumber: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    profile_picture: {
+    profilePicture: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -77,7 +77,7 @@ UserDetail.init(
     sequelize,
     modelName: 'UserDetail',
     tableName: 'user_details',
-    underscored: true
+    underscored: false
   }
 );
 
