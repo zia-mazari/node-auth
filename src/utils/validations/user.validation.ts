@@ -18,7 +18,7 @@ export const updatePasswordSchema = Joi.object<UpdatePasswordSchema>({
   }),
   newPassword: Joi.string()
     .min(8)
-    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'))
+    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&()\\[\\]{}|\\\\:;,.<>/~`_+-=])[A-Za-z\\d@$!%*?&()\\[\\]{}|\\\\:;,.<>/~`_+-=]{8,}$'))
     .required()
     .invalid(Joi.ref('currentPassword'))
     .messages({

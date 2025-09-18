@@ -15,16 +15,30 @@ export class UserService {
    */
   static async getProfile(userId: string, res: Response): Promise<void> {
     try {
-      const user = await User.findByPk(userId);
+      const user = await User.findByPk(userId, {
+        include: [{ model: UserDetail, as: 'userDetail' }]
+      });
+      
       if (!user) {
         return ApiHelper.notFound(res);
       }
       
-      // Return user data without sensitive information
+      // Get user detail or create empty object if not exists
+      const userDetail = (user.userDetail as any) || {};
+      
+      // Return full user data including profile details
       const userData = {
         id: user.id,
         username: user.username,
         email: user.email,
+        profile: {
+          firstName: userDetail.firstName || null,
+          lastName: userDetail.lastName || null,
+          gender: userDetail.gender || null,
+          dateOfBirth: userDetail.dateOfBirth || null,
+          phoneNumber: userDetail.phoneNumber || null,
+          profilePicture: userDetail.profilePicture || null
+        },
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       };
@@ -71,23 +85,8 @@ export class UserService {
 
       await userDetail.update(updateData);
 
-      // Return updated user data
-      const userData = {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        profile: {
-          firstName: userDetail.firstName,
-          lastName: userDetail.lastName,
-          gender: userDetail.gender,
-          dateOfBirth: userDetail.dateOfBirth,
-          phoneNumber: userDetail.phoneNumber,
-          profilePicture: userDetail.profilePicture
-        },
-        updatedAt: user.updatedAt
-      };
-
-      return ApiHelper.success(res, 'PROFILE_UPDATED', userData);
+      // Don't return user data after profile update
+      return ApiHelper.success(res, 'PROFILE_UPDATED');
     } catch (error) {
       console.error('USER SERVICE - Update profile error:', error);
       return ApiHelper.error(res, 'PROFILE_UPDATE_FAILED', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,7 +103,7 @@ export class UserService {
    */
   static async updatePassword(userId: string, passwordData: IPasswordUpdate, res: Response): Promise<void> {
     try {
-      const { currentPassword, newPassword } = passwordData;
+      const { currentPassword, newPassword, logout = false } = passwordData;
       
       const user = await User.findByPk(userId);
       if (!user) {
@@ -122,6 +121,13 @@ export class UserService {
 
       // Update password
       await user.update({ password: hashedPassword });
+
+      // Handle logout if requested
+      if (logout) {
+        // Clear the authentication cookie
+        res.clearCookie('jwt');
+        return ApiHelper.success(res, 'PASSWORD_UPDATED_AND_LOGGED_OUT');
+      }
 
       return ApiHelper.success(res, 'PASSWORD_UPDATED');
     } catch (error) {
