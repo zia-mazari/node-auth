@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import User from '../../models/User.model';
+import PasswordResetToken from '../../models/PasswordResetToken.model';
 import { IUserLogin } from '../../types/user.types';
 import { ApiHelper, HttpStatus } from '../../utils/helpers/api.helper';
 import RateLimitService from '../../services/api/rateLimit.service';
@@ -79,6 +80,25 @@ export class LoginService {
       if (blockCheck.blocked) {
         // Reset attemptCount (they proved they know the password) but keep block active
         await RateLimitService.resetAttemptCount(clientIp, email);
+        
+        // Security Enhancement: Even if blocked, invalidate password reset tokens
+        // User proved they know their password, so reset tokens are no longer needed
+        try {
+          const deletedTokens = await PasswordResetToken.destroy({
+            where: {
+              userId: user.id,
+              used: false,
+              expiresAt: { [require('sequelize').Op.gt]: new Date() }
+            }
+          });
+          
+          if (deletedTokens > 0) {
+            console.log(`LOGIN SECURITY: Invalidated ${deletedTokens} password reset token(s) for blocked user ${user.email} who provided correct credentials`);
+          }
+        } catch (tokenCleanupError) {
+          console.error('LOGIN SECURITY: Failed to cleanup password reset tokens for blocked user:', tokenCleanupError);
+        }
+        
         // Still return block message - user must wait for block period to end
         return ApiHelper.unauthorized(res, blockCheck.message, { 
           blockedUntil: blockCheck.blockedUntil, 
@@ -102,6 +122,26 @@ export class LoginService {
 
       // Clear rate limit record for successful login when not blocked
       await RateLimitService.clear(clientIp, email);
+
+      // Security Enhancement: Invalidate any active password reset tokens
+      // If user can login successfully, they don't need password reset tokens
+      // This prevents potential token hijacking or misuse
+      try {
+        const deletedTokens = await PasswordResetToken.destroy({
+          where: {
+            userId: user.id,
+            used: false,
+            expiresAt: { [require('sequelize').Op.gt]: new Date() }
+          }
+        });
+        
+        if (deletedTokens > 0) {
+          console.log(`LOGIN SECURITY: Invalidated ${deletedTokens} active password reset token(s) for user ${user.email} after successful login`);
+        }
+      } catch (tokenCleanupError) {
+        // Log error but don't fail the login process
+        console.error('LOGIN SECURITY: Failed to cleanup password reset tokens:', tokenCleanupError);
+      }
 
       return ApiHelper.success(res, 'LOGIN_SUCCESSFUL', { token });
     } catch (error) {

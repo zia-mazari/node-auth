@@ -173,8 +173,15 @@ export class PasswordResetService {
       // Hash the new password
       const hashedPassword = await hashPassword(newPassword);
 
-      // Update user's password
-      await user.update({ password: hashedPassword });
+      // Update user's password directly in database to bypass beforeUpdate hook
+      // This prevents double hashing since the password is already hashed
+      await User.update(
+        { password: hashedPassword },
+        { 
+          where: { id: user.id },
+          hooks: false // Bypass model hooks to prevent double hashing
+        }
+      );
 
       // Mark token as used
       await resetToken.update({ used: true });
