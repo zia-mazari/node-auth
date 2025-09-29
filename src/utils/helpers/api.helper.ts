@@ -126,12 +126,16 @@ export class ApiHelper {
    * Send an unauthorized response
    * 
    * @param res - Express response object
+   * @param message - Optional custom message (defaults to UNAUTHORIZED_ACCESS)
+   * @param data - Optional extra data to include in response
    * @returns void
    */
-  static unauthorized(
-    res: Response
+  static unauthorized<T = any>(
+    res: Response,
+    message?: string,
+    data: T | null = null
   ): void {
-    this.error(res, ErrorMessages.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+    this.error(res, message ?? ErrorMessages.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED, [], data);
   }
   
   /**
@@ -180,5 +184,37 @@ export class ApiHelper {
     };
     
     res.status(HttpStatus.CREATED).json(response);
+  }
+
+  /**
+   * Send a bad request response
+   * 
+   * @param res - Express response object
+   * @param message - Error message
+   * @param data - Optional extra data to include in response
+   * @returns void
+   */
+  static badRequest<T = any>(
+    res: Response,
+    message: string = 'Bad Request',
+    data: T | null = null
+  ): void {
+    this.error(res, message, HttpStatus.BAD_REQUEST, [], data);
+  }
+
+  /**
+   * Send a too many requests response
+   * 
+   * @param res - Express response object
+   * @param message - Rate limit message
+   * @param data - Optional extra data to include in response
+   * @returns void
+   */
+  static tooManyRequests<T = any>(
+    res: Response,
+    message: string = 'Too Many Requests',
+    data: T | null = null
+  ): void {
+    this.error(res, message, HttpStatus.TOO_MANY_REQUESTS, [], data);
   }
 }

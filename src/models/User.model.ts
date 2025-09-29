@@ -1,8 +1,9 @@
-import { Model, DataTypes, Optional, HasOneCreateAssociationMixin } from 'sequelize';
+import { Model, DataTypes, Optional, HasOneCreateAssociationMixin, HasManyCreateAssociationMixin } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import { sequelize } from '../config/database.config';
 import { IUser } from '../types/user.types';
 import { UserDetail } from './UserDetail.model';
+import { PasswordResetToken } from './PasswordResetToken.model';
 
 interface UserCreationAttributes extends Optional<IUser, 'id'> {}
 
@@ -67,6 +68,18 @@ User.hasOne(UserDetail, {
 });
 
 UserDetail.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
+// Define PasswordResetToken associations
+User.hasMany(PasswordResetToken, {
+  sourceKey: 'id',
+  foreignKey: 'userId',
+  as: 'passwordResetTokens'
+});
+
+PasswordResetToken.belongsTo(User, {
   foreignKey: 'userId',
   as: 'user'
 });
