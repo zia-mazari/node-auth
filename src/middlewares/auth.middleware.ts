@@ -63,7 +63,7 @@ export const authenticateRefreshToken = (req: RequestWithToken, res: Response, n
   }
 
   try {
-    const payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!) as any;
+    const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as any;
     
     // Extract user ID from payload
     const userId = payload.userId;
