@@ -5,6 +5,7 @@ import User from '../../models/User.model';
 import { IUserLogin } from '../../types/user.types';
 import { ApiHelper, HttpStatus } from '../../utils/helpers/api.helper';
 import RateLimitService from '../../services/api/rateLimit.service';
+import rateLimitConfig from '../../config/rate-limit.config';
 
 export class LoginService {
   /**
@@ -29,10 +30,10 @@ export class LoginService {
       // Check if currently blocked
       const blockCheck = await RateLimitService.isBlocked(clientIp, email);
       
-      // For repeat offenders (blockCount >= 2), don't waste resources checking credentials
+      // For repeat offenders (blockCount >= maxBlockCount), don't waste resources checking credentials
       if (blockCheck.blocked) {
         const stats = await RateLimitService.getStats(clientIp, email);
-        if (stats && stats.blockCount >= 2) {
+        if (stats && stats.blockCount >= rateLimitConfig.maxBlockCount) {
           // High-risk user - don't check credentials, just track blocked attempt
           await RateLimitService.recordBlockedAttempt(clientIp, email);
           return ApiHelper.unauthorized(res, blockCheck.message, { 
@@ -96,7 +97,7 @@ export class LoginService {
       const token = jwt.sign(
         tokenPayload,
         process.env.JWT_SECRET!,
-        { expiresIn: '1h' }
+        { expiresIn: rateLimitConfig.jwt.tokenExpiration }
       );
 
       // Clear rate limit record for successful login when not blocked

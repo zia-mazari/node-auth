@@ -3,6 +3,7 @@ import { Response } from 'express';
 import User from '../../models/User.model';
 import { IUserInput } from '../../types/user.types';
 import { ApiHelper, HttpStatus } from '../../utils/helpers/api.helper';
+import rateLimitConfig from '../../config/rate-limit.config';
 
 export class RegisterService {
   /**
@@ -42,7 +43,7 @@ export class RegisterService {
           email: user.email
         },
         process.env.JWT_SECRET!,
-        { expiresIn: '1h' }
+        { expiresIn: rateLimitConfig.jwt.tokenExpiration }
       );
 
       return ApiHelper.created(res, 'REGISTRATION_SUCCESSFUL', { token });

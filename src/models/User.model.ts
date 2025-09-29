@@ -1,9 +1,9 @@
 import { Model, DataTypes, Optional, HasOneCreateAssociationMixin, HasManyCreateAssociationMixin } from 'sequelize';
-import bcrypt from 'bcryptjs';
 import { sequelize } from '../config/database.config';
 import { IUser } from '../types/user.types';
 import { UserDetail } from './UserDetail.model';
 import { PasswordResetToken } from './PasswordResetToken.model';
+import { hashPassword } from '../utils/helpers/password.helper';
 
 interface UserCreationAttributes extends Optional<IUser, 'id'> {}
 
@@ -86,14 +86,12 @@ PasswordResetToken.belongsTo(User, {
 
 // Hash password before saving
 User.beforeCreate(async (user: User) => {
-  const hashedPassword = await bcrypt.hash(user.password, 10);
-  user.password = hashedPassword;
+  user.password = await hashPassword(user.password);
 });
 
 User.beforeUpdate(async (user: User) => {
   if (user.changed('password')) {
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    user.password = hashedPassword;
+    user.password = await hashPassword(user.password);
   }
 });
 

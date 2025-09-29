@@ -1,11 +1,11 @@
-import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import User from '../../models/User.model';
 import PasswordResetToken from '../../models/PasswordResetToken.model';
 import { ApiHelper, HttpStatus } from '../../utils/helpers/api.helper';
 import RateLimitService from '../api/rateLimit.service';
 import EmailService from '../email/email.service';
+import rateLimitConfig from '../../config/rate-limit.config';
+import { hashPassword } from '../../utils/helpers/password.helper';
 
 export class PasswordResetService {
   /**
@@ -56,9 +56,10 @@ export class PasswordResetService {
           order: [['createdAt', 'ASC']] // Oldest first
         });
 
-        // If we have 3 or more active tokens, delete the oldest ones to keep only 2
-        if (activeTokens.length >= 3) {
-          const tokensToDelete = activeTokens.slice(0, activeTokens.length - 2);
+        // If we have more active tokens than allowed, delete the oldest ones to keep only the max allowed
+        const maxActiveTokens = rateLimitConfig.passwordReset.maxActiveTokens;
+        if (activeTokens.length >= maxActiveTokens + 1) {
+          const tokensToDelete = activeTokens.slice(0, activeTokens.length - maxActiveTokens);
           const tokenIdsToDelete = tokensToDelete.map(token => token.id);
           
           await PasswordResetToken.destroy({
@@ -69,8 +70,8 @@ export class PasswordResetService {
         // Generate 6-digit reset code
         const resetToken = Math.floor(100000 + Math.random() * 900000).toString();
         
-        // Token expires in 15 minutes (more secure with shorter codes)
-        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+        // Token expires based on configuration (default: 15 minutes)
+        const expiresAt = new Date(Date.now() + rateLimitConfig.passwordReset.tokenExpirationMinutes * 60 * 1000);
 
         // Create password reset token record
         await PasswordResetToken.create({
@@ -170,8 +171,7 @@ export class PasswordResetService {
       }
 
       // Hash the new password
-      const saltRounds = 12;
-      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      const hashedPassword = await hashPassword(newPassword);
 
       // Update user's password
       await user.update({ password: hashedPassword });

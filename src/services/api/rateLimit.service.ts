@@ -117,9 +117,9 @@ export class RateLimitService {
     try {
       const record = await ApiRateLimit.findOne({ where: { ip, username } });
       if (record) {
-        // Only increment attemptCount if blockCount < 2
-        // After blockCount >= 2, attemptCount should stop incrementing
-        if (record.blockCount < 2) {
+        // Only increment attemptCount if blockCount < maxBlockCount
+        // After blockCount >= maxBlockCount, attemptCount should stop incrementing
+        if (record.blockCount < rateLimitConfig.maxBlockCount) {
           await record.increment('attemptCount', { by: 1 });
           await record.reload();
           
@@ -232,7 +232,7 @@ export class RateLimitService {
 
   /**
    * Record a password reset attempt
-   * Blocks after 3 attempts for 1 hour
+   * Blocks after configured attempts for configured duration
    */
   static async recordPasswordResetAttempt(
     ip: string,
@@ -240,8 +240,8 @@ export class RateLimitService {
   ): Promise<{ blocked: boolean; message?: string; blockedUntil?: Date; durationMs?: number }> {
     try {
       const identifier = `pwd_reset_${ip}_${email}`;
-      const maxAttempts = 3; // Allow 3 password reset requests per 15 minutes
-      const blockDurationMs = 15 * 60 * 1000; // 15 minutes block
+      const maxAttempts = rateLimitConfig.passwordReset.maxAttempts;
+      const blockDurationMs = rateLimitConfig.passwordReset.blockDurationMs;
 
       // Find existing record or create new one
       const [record, created] = await ApiRateLimit.findOrCreate({
@@ -325,7 +325,7 @@ export class RateLimitService {
 
   /**
    * Record a failed password reset attempt (wrong token)
-   * Blocks after 5 wrong attempts for 30 minutes
+   * Blocks after configured wrong attempts for configured duration
    */
   static async recordPasswordResetFailure(
     ip: string,
@@ -333,8 +333,8 @@ export class RateLimitService {
   ): Promise<{ blocked: boolean; message?: string; blockedUntil?: Date; durationMs?: number }> {
     try {
       const identifier = `pwd_reset_fail_${ip}_${email}`;
-      const maxAttempts = 5; // Allow 5 wrong attempts before blocking
-      const blockDurationMs = 30 * 60 * 1000; // 30 minutes block
+      const maxAttempts = rateLimitConfig.passwordReset.maxFailureAttempts;
+      const blockDurationMs = rateLimitConfig.passwordReset.failureBlockDurationMs;
 
       // Find existing record or create new one
       const [record, created] = await ApiRateLimit.findOrCreate({

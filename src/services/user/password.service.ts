@@ -3,6 +3,7 @@ import { Response } from 'express';
 import User from '../../models/User.model';
 import { IPasswordUpdate } from '../../types/user.types';
 import { ApiHelper, HttpStatus } from '../../utils/helpers/api.helper';
+import { hashPassword } from '../../utils/helpers/password.helper';
 
 export class PasswordService {
   /**
@@ -29,7 +30,7 @@ export class PasswordService {
       }
 
       // Hash new password
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const hashedPassword = await hashPassword(newPassword);
 
       // Update password
       await user.update({ password: hashedPassword });

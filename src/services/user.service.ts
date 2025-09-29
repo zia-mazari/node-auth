@@ -4,6 +4,7 @@ import User from '../models/User.model';
 import UserDetail from '../models/UserDetail.model';
 import { IPasswordUpdate } from '../types/user.types';
 import { ApiHelper, HttpStatus } from '../utils/helpers/api.helper';
+import { hashPassword } from '../utils/helpers/password.helper';
 
 export class UserService {
   /**
@@ -117,7 +118,7 @@ export class UserService {
       }
 
       // Hash new password
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const hashedPassword = await hashPassword(newPassword);
 
       // Update password
       await user.update({ password: hashedPassword });
