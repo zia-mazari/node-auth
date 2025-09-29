@@ -91,7 +91,7 @@ export class PasswordResetService {
 
       // Always return success message (security best practice)
       return ApiHelper.success(res, 'PASSWORD_RESET_EMAIL_SENT', {
-        message: 'If an account with that email exists, a password reset link has been sent.'
+        message: 'If an account with that email exists, a password reset verification code has been sent.'
       });
 
     } catch (error) {
@@ -250,20 +250,33 @@ export class PasswordResetService {
   }
 
   /**
-   * Send password reset email (placeholder for actual email service)
+   * Send password reset email with verification code (placeholder for actual email service)
    * 
    * @param email - Recipient email
-   * @param token - Reset token
+   * @param verificationCode - 6-digit verification code
    * @param req - Express request object
    * @private
    */
-  private static async sendPasswordResetEmail(email: string, token: string, req: Request): Promise<void> {
+  private static async sendPasswordResetEmail(email: string, verificationCode: string, req: Request): Promise<void> {
     // TODO: Implement actual email sending
     // This is where you would integrate with SendGrid, Nodemailer, AWS SES, etc.
     
-    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${token}`;
+    // Email content should include the 6-digit verification code
+    const emailContent = {
+      to: email,
+      subject: 'Password Reset Verification Code',
+      text: `Your password reset verification code is: ${verificationCode}. This code will expire in 1 hour.`,
+      html: `
+        <h2>Password Reset Request</h2>
+        <p>You have requested to reset your password. Please use the following verification code:</p>
+        <h3 style="font-size: 24px; letter-spacing: 2px; color: #007bff;">${verificationCode}</h3>
+        <p><strong>This code will expire in 1 hour.</strong></p>
+        <p>If you did not request this password reset, please ignore this email.</p>
+      `
+    };
     
     // Email sending logic would be implemented here
+    // Example: await emailService.send(emailContent);
     // For now, this is a placeholder for actual email service integration
   }
 }
