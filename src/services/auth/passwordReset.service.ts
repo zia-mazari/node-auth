@@ -5,6 +5,7 @@ import User from '../../models/User.model';
 import PasswordResetToken from '../../models/PasswordResetToken.model';
 import { ApiHelper, HttpStatus } from '../../utils/helpers/api.helper';
 import RateLimitService from '../api/rateLimit.service';
+import EmailService from '../email/email.service';
 
 export class PasswordResetService {
   /**
@@ -77,13 +78,13 @@ export class PasswordResetService {
           email: user.email,
           verificationCode: resetToken,
           expiresAt,
-          used: false
+          used: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
         });
 
-        // Token generated successfully
-        
-        // In production, you would use a service like SendGrid, Nodemailer, etc.
-        // await this.sendPasswordResetEmail(user.email, resetToken, req);
+        // Send password reset email with verification code
+        await this.sendPasswordResetEmail(user.email, resetToken, req);
       }
 
       // Record the password reset request for rate limiting
@@ -258,26 +259,14 @@ export class PasswordResetService {
    * @private
    */
   private static async sendPasswordResetEmail(email: string, verificationCode: string, req: Request): Promise<void> {
-    // TODO: Implement actual email sending
-    // This is where you would integrate with SendGrid, Nodemailer, AWS SES, etc.
-    
-    // Email content should include the 6-digit verification code
-    const emailContent = {
-      to: email,
-      subject: 'Password Reset Verification Code',
-      text: `Your password reset verification code is: ${verificationCode}. This code will expire in 1 hour.`,
-      html: `
-        <h2>Password Reset Request</h2>
-        <p>You have requested to reset your password. Please use the following verification code:</p>
-        <h3 style="font-size: 24px; letter-spacing: 2px; color: #007bff;">${verificationCode}</h3>
-        <p><strong>This code will expire in 1 hour.</strong></p>
-        <p>If you did not request this password reset, please ignore this email.</p>
-      `
-    };
-    
-    // Email sending logic would be implemented here
-    // Example: await emailService.send(emailContent);
-    // For now, this is a placeholder for actual email service integration
+    try {
+      // Send password reset email using the EmailService with proper template
+      await EmailService.sendPasswordResetEmail(email, verificationCode, 60); // 60 minutes expiration
+    } catch (error) {
+      // Log error but don't throw to maintain security (don't reveal email sending failures)
+      console.error('Failed to send password reset email:', error);
+      // In production, you might want to log this to a monitoring service
+    }
   }
 }
 

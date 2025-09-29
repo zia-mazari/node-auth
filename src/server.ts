@@ -5,7 +5,6 @@ import routes from './routes';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import RateLimiterHelper from './utils/helpers/rate-limiter.helper';
 import rateLimitConfig from './config/rate-limit.config';
 
 dotenv.config();

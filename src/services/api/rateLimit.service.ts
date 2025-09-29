@@ -58,7 +58,9 @@ export class RateLimitService {
           username,
           attemptCount: 1, 
           blockCount: 0,
-          blockedUntil: null
+          blockedUntil: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       });
 
@@ -249,7 +251,9 @@ export class RateLimitService {
           username: email,
           attemptCount: 1, 
           blockCount: 0,
-          blockedUntil: null
+          blockedUntil: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       });
 
@@ -340,7 +344,9 @@ export class RateLimitService {
           username: email,
           attemptCount: 1, 
           blockCount: 0,
-          blockedUntil: null
+          blockedUntil: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       });
 
