@@ -43,9 +43,7 @@ export class PasswordResetService {
           }
         });
         
-        if (deletedCount > 0) {
-          console.log(`Cleaned up ${deletedCount} expired tokens for user ${user.email}`);
-        }
+        // Cleanup completed silently
 
         // Check current active tokens for this user
         const activeTokens = await PasswordResetToken.findAll({
@@ -82,10 +80,7 @@ export class PasswordResetService {
           used: false
         });
 
-        // TODO: Send email with reset link
-        // For now, we'll log the token (in production, this should be sent via email)
-        console.log(`Password reset token for ${email}: ${resetToken}`);
-        console.log(`Reset link: ${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`);
+        // Token generated successfully
         
         // In production, you would use a service like SendGrid, Nodemailer, etc.
         // await this.sendPasswordResetEmail(user.email, resetToken, req);
@@ -268,12 +263,8 @@ export class PasswordResetService {
     
     const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${token}`;
     
-    console.log(`
-      Email would be sent to: ${email}
-      Subject: Password Reset Request
-      Reset URL: ${resetUrl}
-      Token expires in 1 hour.
-    `);
+    // Email sending logic would be implemented here
+    // For now, this is a placeholder for actual email service integration
   }
 }
 
