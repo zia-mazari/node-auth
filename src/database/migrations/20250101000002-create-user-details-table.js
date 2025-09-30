@@ -7,12 +7,12 @@ module.exports = {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
-        primaryKey: true
+        primaryKey: true,
+        allowNull: false
       },
       userId: {
         type: Sequelize.UUID,
         allowNull: false,
-        field: 'userId',
         references: {
           model: 'users',
           key: 'id'
@@ -22,13 +22,11 @@ module.exports = {
       },
       firstName: {
         type: Sequelize.STRING,
-        allowNull: true,
-        field: 'firstName'
+        allowNull: true
       },
       lastName: {
         type: Sequelize.STRING,
-        allowNull: true,
-        field: 'lastName'
+        allowNull: true
       },
       gender: {
         type: Sequelize.ENUM('male', 'female', 'other'),
@@ -36,29 +34,36 @@ module.exports = {
       },
       dateOfBirth: {
         type: Sequelize.DATEONLY,
-        allowNull: true,
-        field: 'dateOfBirth'
+        allowNull: true
       },
       phoneNumber: {
         type: Sequelize.STRING,
-        allowNull: true,
-        field: 'phoneNumber'
+        allowNull: true
       },
       profilePicture: {
         type: Sequelize.STRING,
-        allowNull: true,
-        field: 'profilePicture'
+        allowNull: true
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        field: 'createdAt'
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        field: 'updatedAt'
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
+    });
+
+    // Add indexes for better performance
+    await queryInterface.addIndex('user_details', ['userId'], {
+      name: 'idx_user_details_userId',
+      unique: true
+    });
+
+    await queryInterface.addIndex('user_details', ['phoneNumber'], {
+      name: 'idx_user_details_phoneNumber'
     });
   },
 

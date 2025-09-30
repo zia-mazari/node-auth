@@ -69,7 +69,7 @@ ApiRateLimit.init(
   {
     sequelize,
     modelName: 'ApiRateLimit',
-    tableName: 'api_rate_limits',
+    tableName: 'auth_login_attempts',
     timestamps: true
   }
 );

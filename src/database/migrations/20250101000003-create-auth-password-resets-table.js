@@ -2,8 +2,8 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('password_reset_tokens', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('auth_password_resets', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -22,9 +22,12 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isEmail: true
+        }
       },
-      token: {
+      verificationCode: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
@@ -46,27 +49,33 @@ module.exports = {
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-        onUpdate: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
 
-    // Add indexes for better performance
-    await queryInterface.addIndex('password_reset_tokens', ['token'], {
-      name: 'idx_password_reset_tokens_token'
+    // Add indexes for performance
+    await queryInterface.addIndex('auth_password_resets', ['userId'], {
+      name: 'idx_auth_password_resets_user_id'
     });
-    await queryInterface.addIndex('password_reset_tokens', ['email'], {
-      name: 'idx_password_reset_tokens_email'
+    
+    await queryInterface.addIndex('auth_password_resets', ['email'], {
+      name: 'idx_auth_password_resets_email'
     });
-    await queryInterface.addIndex('password_reset_tokens', ['userId'], {
-      name: 'idx_password_reset_tokens_userId'
+    
+    await queryInterface.addIndex('auth_password_resets', ['verificationCode'], {
+      name: 'idx_auth_password_resets_verification_code'
     });
-    await queryInterface.addIndex('password_reset_tokens', ['expiresAt'], {
-      name: 'idx_password_reset_tokens_expiresAt'
+    
+    await queryInterface.addIndex('auth_password_resets', ['expiresAt'], {
+      name: 'idx_auth_password_resets_expires_at'
+    });
+    
+    await queryInterface.addIndex('auth_password_resets', ['used'], {
+      name: 'idx_auth_password_resets_used'
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('password_reset_tokens');
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('auth_password_resets');
   }
 };

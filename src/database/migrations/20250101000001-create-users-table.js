@@ -7,7 +7,8 @@ module.exports = {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
-        primaryKey: true
+        primaryKey: true,
+        allowNull: false
       },
       username: {
         type: Sequelize.STRING,
@@ -17,7 +18,10 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
+        validate: {
+          isEmail: true
+        }
       },
       password: {
         type: Sequelize.STRING,
@@ -25,19 +29,30 @@ module.exports = {
       },
       isVerified: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        field: 'isVerified'
+        allowNull: false,
+        defaultValue: false
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        field: 'createdAt'
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE,
-        field: 'updatedAt'
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
+    });
+
+    // Add indexes for better performance
+    await queryInterface.addIndex('users', ['email'], {
+      name: 'idx_users_email',
+      unique: true
+    });
+
+    await queryInterface.addIndex('users', ['username'], {
+      name: 'idx_users_username',
+      unique: true
     });
   },
 
