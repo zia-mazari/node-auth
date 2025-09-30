@@ -1,0 +1,25 @@
+{{appName}} - Email Verification
+
+Hello,
+
+Thank you for registering with {{appName}}! To complete your account setup and verify your email address, please use the following verification code:
+
+VERIFICATION CODE: {{verificationCode}}
+
+IMPORTANT INFORMATION:
+- This code will expire in {{expirationTime}}
+- Never share this verification code with anyone
+- {{appName}} will never ask for your verification code via phone or email
+- If you didn't create an account, please ignore this email
+- This verification code can only be used once
+
+Once you verify your email, you'll have full access to all {{appName}} features.
+
+If you have any questions or need assistance, please contact our support team.
+
+Best regards,
+The {{appName}} Team
+
+---
+This is an automated message, please do not reply to this email.
+© {{currentYear}} {{appName}}. All rights reserved.

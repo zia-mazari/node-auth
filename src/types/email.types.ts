@@ -18,10 +18,17 @@ export interface PasswordResetEmailData {
   currentYear: number;
 }
 
+export interface EmailVerificationData {
+  verificationCode: string;
+  expirationTime: string;
+  appName: string;
+  currentYear: number;
+}
+
 export interface EmailServiceConfig {
   appName: string;
   fromEmail: string;
   fromName: string;
 }
 
-export type EmailTemplateType = 'password-reset';
+export type EmailTemplateType = 'password-reset' | 'email-verification';

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
+import { RequestWithUser } from '../types/express.types';
 import { IUserInput, IUserLogin } from '../types/user.types';
 import { LoginService, RegisterService } from '../services/auth';
 import PasswordResetService from '../services/auth/passwordReset.service';
+import EmailVerificationService from '../services/auth/emailVerification.service';
 
 /**
  * Register a new user
@@ -81,4 +83,91 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 export const validateResetToken = async (req: Request, res: Response): Promise<void> => {
   const { verificationCode } = req.params;
   return PasswordResetService.validateResetToken(verificationCode, req, res);
+};
+
+/**
+ * Send verification email with 6-digit code
+ * 
+ * @param req - Express request object with authenticated user
+ * @param res - Express response object
+ * @returns Promise<void>
+ * 
+ * @description
+ * Sends a 6-digit verification code to the authenticated user's email address.
+ * Delegates business logic to EmailVerificationService.
+ */
+export const sendVerificationEmail = async (req: RequestWithUser, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+      return;
+    }
+
+    const result = await EmailVerificationService.sendVerificationEmail(req.user.id);
+    
+    if (result.success) {
+      res.status(200).json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Error in sendVerificationEmail controller:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+/**
+ * Verify email with 6-digit code
+ * 
+ * @param req - Express request object with authenticated user and verification code
+ * @param res - Express response object
+ * @returns Promise<void>
+ * 
+ * @description
+ * Verifies the 6-digit code and updates authenticated user's email verification status.
+ * Delegates business logic to EmailVerificationService.
+ */
+export const verifyEmail = async (req: RequestWithUser, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+      return;
+    }
+
+    const { code } = req.body;
+    const result = await EmailVerificationService.verifyCode(req.user.id, code);
+    
+    if (result.success) {
+      res.status(200).json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Error in verifyEmail controller:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
 };

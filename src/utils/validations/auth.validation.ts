@@ -24,6 +24,14 @@ export interface ValidateTokenSchema {
   verificationCode: string;
 }
 
+export interface SendVerificationEmailSchema {
+  // No body parameters needed - userId comes from authentication token
+}
+
+export interface VerifyEmailSchema {
+  code: string;
+}
+
 export const loginSchema = Joi.object<LoginSchema>({
   email: Joi.string()
     .email({ minDomainSegments: 2 })
@@ -119,6 +127,23 @@ export const resetPasswordSchema = Joi.object<ResetPasswordSchema>({
 
 export const validateTokenSchema = Joi.object<ValidateTokenSchema>({
   verificationCode: Joi.string()
+    .length(6)
+    .pattern(/^[0-9]{6}$/)
+    .required()
+    .messages({
+      'string.empty': 'VERIFICATION_CODE_REQUIRED',
+      'string.length': 'VERIFICATION_CODE_MUST_BE_6_DIGITS',
+      'string.pattern.base': 'VERIFICATION_CODE_MUST_BE_6_DIGITS',
+      'any.required': 'VERIFICATION_CODE_REQUIRED'
+    })
+}).unknown(true);
+
+export const sendVerificationEmailSchema = Joi.object<SendVerificationEmailSchema>({
+  // No body validation needed - userId comes from authentication token
+}).unknown(true);
+
+export const verifyEmailSchema = Joi.object<VerifyEmailSchema>({
+  code: Joi.string()
     .length(6)
     .pattern(/^[0-9]{6}$/)
     .required()

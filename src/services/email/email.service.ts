@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { EmailTemplate, EmailOptions, EmailServiceConfig, EmailTemplateType, PasswordResetEmailData } from '../../types/email.types';
+import { EmailTemplate, EmailOptions, EmailServiceConfig, EmailTemplateType, PasswordResetEmailData, EmailVerificationData } from '../../types/email.types';
 
 class EmailService {
   private static config: EmailServiceConfig = {
@@ -62,7 +62,8 @@ class EmailService {
    */
   private static getSubjectForTemplate(templateType: EmailTemplateType): string {
     const subjects: Record<EmailTemplateType, string> = {
-      'password-reset': 'Password Reset Verification Code'
+      'password-reset': 'Password Reset Verification Code',
+      'email-verification': 'Email Verification Code'
     };
     
     return subjects[templateType] || 'Notification';
@@ -89,6 +90,39 @@ class EmailService {
     };
 
     const template = await this.loadTemplate('password-reset', templateData);
+    
+    const emailOptions: EmailOptions = {
+      to: email,
+      subject: template.subject,
+      html: template.html,
+      text: template.text
+    };
+
+    // Send email using configured email provider
+    await this.sendEmail(emailOptions);
+  }
+
+  /**
+   * Send email verification email with verification code
+   * 
+   * @param email - Recipient email address
+   * @param verificationCode - 6-digit verification code
+   * @param expirationMinutes - Code expiration time in minutes (default: 15)
+   * @returns Promise<void>
+   */
+  public static async sendVerificationEmail(
+    email: string, 
+    verificationCode: string, 
+    expirationMinutes: number = 15
+  ): Promise<void> {
+    const templateData: EmailVerificationData = {
+      verificationCode,
+      expirationTime: `${expirationMinutes} minute${expirationMinutes !== 1 ? 's' : ''}`,
+      appName: this.config.appName,
+      currentYear: new Date().getFullYear()
+    };
+
+    const template = await this.loadTemplate('email-verification', templateData);
     
     const emailOptions: EmailOptions = {
       to: email,

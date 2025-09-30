@@ -1,13 +1,14 @@
 import express from 'express';
 import * as authController from '../controllers/auth.controller';
-import { authenticateToken } from '../middlewares/auth.middleware';
 import { validateRequest } from '../middlewares/validation.middleware';
+import { authenticateToken } from '../middlewares/auth.middleware';
 import { 
   loginSchema, 
   signupSchema, 
   forgotPasswordSchema, 
-  resetPasswordSchema, 
-  validateTokenSchema 
+  resetPasswordSchema,
+  sendVerificationEmailSchema,
+  verifyEmailSchema
 } from '../utils/validations/auth.validation';
 
 const router = express.Router();
@@ -20,5 +21,9 @@ router.post('/login', validateRequest(loginSchema), authController.login);
 router.post('/forgot-password', validateRequest(forgotPasswordSchema), authController.forgotPassword);
 router.post('/reset-password', validateRequest(resetPasswordSchema), authController.resetPassword);
 router.get('/validate-code/:verificationCode', authController.validateResetToken);
+
+// Email verification routes (protected - require authentication)
+router.post('/send-verification-email', authenticateToken, authController.sendVerificationEmail);
+router.post('/verify-email', authenticateToken, validateRequest(verifyEmailSchema), authController.verifyEmail);
 
 export default router;

@@ -110,7 +110,8 @@ export class LoginService {
       const tokenPayload = { 
         userId: user.id, 
         username: user.username,
-        email: user.email
+        email: user.email,
+        isVerified: user.isVerified
       };
       
       // Generate token

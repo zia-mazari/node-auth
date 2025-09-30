@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        .verification-code {
+            background-color: #f8f9fa;
+            border: 2px dashed #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #28a745;
+            font-family: 'Courier New', monospace;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .security-tips {
+            background-color: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">{{appName}}</div>
+            <h1>Email Verification</h1>
+        </div>
+
+        <p>Hello,</p>
+
+        <p>Thank you for registering with {{appName}}! To complete your account setup and verify your email address, please use the verification code below:</p>
+
+        <div class="verification-code">
+            <p style="margin: 0; font-size: 14px; color: #666;">Your Verification Code</p>
+            <div class="code">{{verificationCode}}</div>
+        </div>
+
+        <div class="warning">
+            <strong>⏰ Time Sensitive:</strong> This verification code will expire in <strong>{{expirationTime}}</strong>.
+        </div>
+
+        <div class="security-tips">
+            <h3 style="margin-top: 0;">🔒 Security Tips:</h3>
+            <ul style="margin-bottom: 0;">
+                <li>Never share this verification code with anyone</li>
+                <li>{{appName}} will never ask for your verification code via phone or email</li>
+                <li>If you didn't create an account, please ignore this email</li>
+                <li>This code can only be used once</li>
+            </ul>
+        </div>
+
+        <p>Once you verify your email, you'll have full access to all {{appName}} features.</p>
+
+        <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+
+        <p>Best regards,<br>
+        The {{appName}} Team</p>
+
+        <div class="footer">
+            <p>This is an automated message, please do not reply to this email.</p>
+            <p>© {{currentYear}} {{appName}}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

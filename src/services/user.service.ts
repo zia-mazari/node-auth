@@ -32,6 +32,7 @@ export class UserService {
         id: user.id,
         username: user.username,
         email: user.email,
+        isVerified: user.isVerified,
         profile: {
           firstName: userDetail.firstName || null,
           lastName: userDetail.lastName || null,
